@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كلية العلوم الصحية - جامعة دمشق</title>
+    <style>
+        :root { --primary: #4f46e5; --secondary: #10b981; --bg: #f8fafc; --card-bg: rgba(255, 255, 255, 0.85); --text-main: #1e293b; --glass-border: rgba(255, 255, 255, 0.5); }
+        .dark { --bg: #0f172a; --card-bg: rgba(30, 41, 59, 0.7); --text-main: #f1f5f9; --glass-border: rgba(255, 255, 255, 0.1); }
+        * { box-sizing: border-box; transition: 0.3s; }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text-main); }
+        nav { position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(15px); background: rgba(79, 70, 229, 0.85); color: white; display: flex; justify-content: space-between; align-items: center; padding: 12px 5%; }
+        nav ul { display: flex; gap: 15px; list-style: none; margin: 0; }
+        nav li { cursor: pointer; padding: 8px 12px; border-radius: 8px; }
+        header { text-align: center; padding: 60px 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%); }
+        .page { display: none; padding: 30px 5%; animation: fadeIn 0.5s; }
+        .active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .card, .panel { background: var(--card-bg); padding: 25px; border-radius: 20px; border: 1px solid var(--glass-border); box-shadow: 0 10px 20px rgba(0,0,0,0.05); cursor: pointer; }
+        .bigBtn { padding: 12px 24px; border: none; border-radius: 12px; background: var(--primary); color: white; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; }
+        #lectures li { background: var(--card-bg); margin: 10px 0; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; border-right: 5px solid var(--primary); align-items: center; }
+        footer { text-align: center; padding: 30px; opacity: 0.7; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <h3 onclick="showPage('home')" style="cursor:pointer">كلية العلوم الصحية ⚕️</h3>
+    <ul>
+        <li onclick="showPage('home')">الرئيسية</li>
+        <li onclick="showPage('semester1')">فصل 1</li>
+        <li onclick="showPage('semester2')">فصل 2</li>
+        <li onclick="showPage('login')">الإدارة</li>
+        <li onclick="toggleTheme()">🌓</li>
+    </ul>
+</nav>
+
+<header>
+    <h1>جامعة دمشق</h1>
+    <p>قسم تقويم الكلام واللغة - السنة الأولى</p>
+</header>
+
+<section id="home" class="page active" style="text-align:center;">
+    <button class="bigBtn" style="width:auto;" onclick="showPage('semester1')">📂 مواد الفصل الأول</button>
+    <button class="bigBtn" style="width:auto;" onclick="showPage('semester2')">📂 مواد الفصل الثاني</button>
+</section>
+
+<section id="semester1" class="page">
+    <h2>📚 مواد الفصل الأول</h2>
+    <div id="subjects1" class="grid-container"></div>
+    <h3 style="margin-top:30px;">📢 الأخبار</h3>
+    <div id="news1" class="grid-container"></div>
+</section>
+
+<section id="semester2" class="page">
+    <h2>📚 مواد الفصل الثاني</h2>
+    <div id="subjects2" class="grid-container"></div>
+    <h3 style="margin-top:30px;">📢 الأخبار</h3>
+    <div id="news2" class="grid-container"></div>
+</section>
+
+<section id="subjectPage" class="page">
+    <div style="text-align:center; max-width:700px; margin:auto;">
+        <button onclick="goBack()" style="background:none; border:none; color:var(--primary); cursor:pointer; font-weight:bold;">⬅ عودة للمواد</button>
+        <h2 id="subjectTitle" style="color:var(--primary);"></h2>
+        <ul id="lectures" style="list-style:none; padding:0;"></ul>
+    </div>
+</section>
+
+<section id="login" class="page">
+    <div class="card" style="max-width:400px; margin:auto; text-align:center;">
+        <h3>دخول الإدارة 🔐</h3>
+        <input type="password" id="pass" placeholder="كلمة السر">
+        <button class="bigBtn" onclick="login()">دخول</button>
+    </div>
+</section>
+
+<section id="admin" class="page">
+    <h2 style="text-align:center;">لوحة التحكم السحابية (Realtime) ⚙️</h2>
+    <div class="grid-container">
+        <div class="panel">
+            <h3>➕ إضافة مادة</h3>
+            <input id="subName" placeholder="اسم المادة">
+            <select id="subSem"><option value="1">الفصل الأول</option><option value="2">الفصل الثاني</option></select>
+            <button onclick="addSubject()" class="bigBtn">حفظ المادة</button>
+        </div>
+        <div class="panel">
+            <h3>📄 إضافة محاضرة</h3>
+            <select id="lecSub"></select>
+            <input id="lecTitle" placeholder="عنوان المحاضرة">
+            <input id="lecNum" type="number" placeholder="رقم المحاضرة">
+            <input type="file" id="lecFile">
+            <button onclick="addLecture()" class="bigBtn">رفع المحاضرة</button>
+        </div>
+        <div class="panel">
+            <h3>🔔 إضافة خبر</h3>
+            <select id="newsSem"><option value="1">الفصل الأول</option><option value="2">الفصل الثاني</option></select>
+            <input id="newsText" placeholder="نص الخبر">
+            <button onclick="addNews()" class="bigBtn">نشر الخبر</button>
+        </div>
+        <div class="panel" style="border-top:5px solid #ef4444;">
+            <h3>🗑️ حذف محتوى</h3>
+            <select id="delList"></select>
+            <button onclick="deleteItem()" class="bigBtn" style="background:#ef4444;">حذف العنصر المختار</button>
+        </div>
+    </div>
+</section>
+
+<footer>✦ بإشراف صديقكم عمر زينو ✦</footer>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    // إعداداتك الخاصة بمشروعك
+    const firebaseConfig = {
+        apiKey: "AIzaSyBBJHEzkS3E9dDqoKufnHovM2F2zZB5Qgo",
+        authDomain: "myuniversityproject-cc06b.firebaseapp.com",
+        databaseURL: "https://myuniversityproject-cc06b-default-rtdb.firebaseio.com/",
+        projectId: "myuniversityproject-cc06b",
+        storageBucket: "myuniversityproject-cc06b.firebasestorage.app",
+        messagingSenderId: "134940725653",
+        appId: "1:134940725653:web:90aa4550a997d95731669c"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    window.showPage = (id) => {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        window.scrollTo(0,0);
+    };
+
+    window.toggleTheme = () => document.body.classList.toggle('dark');
+
+    window.login = () => {
+        if(document.getElementById('pass').value === 'admin123') showPage('admin');
+        else alert('كلمة السر غير صحيحة!');
+    };
+
+    // مزامنة البيانات من السيرفر
+    onValue(ref(db, 'data'), (snapshot) => {
+        const data = snapshot.val() || {};
+        const s1 = document.getElementById('subjects1'), s2 = document.getElementById('subjects2');
+        const lecSub = document.getElementById('lecSub'), delList = document.getElementById('delList');
+        const n1 = document.getElementById('news1'), n2 = document.getElementById('news2');
+
+        s1.innerHTML = ''; s2.innerHTML = ''; lecSub.innerHTML = ''; delList.innerHTML = '';
+        n1.innerHTML = ''; n2.innerHTML = '';
+
+        // معالجة المواد
+        if(data.subjects) {
+            Object.keys(data.subjects).forEach(id => {
+                const s = data.subjects[id];
+                let d = document.createElement('div'); d.className='card'; d.innerHTML=`<strong>${s.name}</strong>`;
+                d.onclick = () => openSubject(s.name);
+                if(s.semester == '1') s1.appendChild(d); else s2.appendChild(d);
+                lecSub.innerHTML += `<option value="${s.name}">${s.name}</option>`;
+                delList.innerHTML += `<option value="subjects/${id}">مادة: ${s.name}</option>`;
+            });
+        }
+
+        // معالجة الأخبار
+        if(data.news) {
+            Object.keys(data.news).forEach(id => {
+                const n = data.news[id];
+                let d = document.createElement('div'); d.className='card'; d.textContent = n.text;
+                if(n.semester == '1') n1.appendChild(d); else n2.appendChild(d);
+                delList.innerHTML += `<option value="news/${id}">خبر: ${n.text}</option>`;
+            });
+        }
+    });
+
+    window.addSubject = () => {
+        const name = document.getElementById('subName').value;
+        const sem = document.getElementById('subSem').value;
+        if(name) push(ref(db, 'data/subjects'), { name, semester: sem });
+    };
+
+    window.addNews = () => {
+        const text = document.getElementById('newsText').value;
+        const sem = document.getElementById('newsSem').value;
+        if(text) push(ref(db, 'data/news'), { text, semester: sem });
+    };
+
+    window.addLecture = () => {
+        const file = document.getElementById('lecFile').files[0];
+        const sub = document.getElementById('lecSub').value;
+        const title = document.getElementById('lecTitle').value;
+        const num = document.getElementById('lecNum').value;
+        if(!file || !title) return alert("أكمل البيانات");
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            push(ref(db, 'data/lectures'), { subject: sub, title, number: num, file: reader.result });
+            alert("تم رفع المحاضرة بنجاح!");
+        };
+        reader.readAsDataURL(file);
+    };
+
+    window.openSubject = (name) => {
+        document.getElementById('subjectTitle').textContent = name;
+        showPage('subjectPage');
+        loadLectures(name);
+    };
+
+    function loadLectures(subName) {
+        onValue(ref(db, 'data/lectures'), (snap) => {
+            const list = document.getElementById('lectures'); list.innerHTML = '';
+            const delList = document.getElementById('delList');
+            const lecs = snap.val() || {};
+            Object.keys(lecs).forEach(id => {
+                const l = lecs[id];
+                if(l.subject === subName) {
+                    list.innerHTML += `<li><span>محاضرة ${l.number}: ${l.title}</span> <button onclick="window.open('${l.file}')" style="background:var(--primary); color:white; border:none; padding:8px; border-radius:8px; cursor:pointer;">تحميل</button></li>`;
+                }
+                // إضافة خيار الحذف للمحاضرات (فقط المواد التي تظهر حالياً لتجنب الزحمة)
+                const opt = document.createElement('option');
+                opt.value = `lectures/${id}`;
+                opt.textContent = `محاضرة: ${l.title}`;
+                // نمنع التكرار في قائمة الحذف
+                if (![...document.getElementById('delList').options].some(o => o.value === opt.value)) {
+                    document.getElementById('delList').appendChild(opt);
+                }
+            });
+        });
+    }
+
+    window.deleteItem = () => {
+        const path = document.getElementById('delList').value;
+        if(path && confirm("هل أنت متأكد من الحذف؟")) remove(ref(db, 'data/' + path));
+    };
+
+    window.goBack = () => showPage('semester1');
+</script>
+</body>
+</html>

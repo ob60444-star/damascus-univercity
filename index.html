@@ -349,44 +349,35 @@ import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/fir
         if(text) push(ref(db, 'data/news'), { semester: sem, text })
             .then(() => document.getElementById("newsText").value = "");
     };
-
-    window.addLecture = () => {
-        const sub = document.getElementById("lectureSubject").value;
-        const title = document.getElementById("lectureTitle").value.trim();
-        const num = document.getElementById("lectureNumber").value;
-        const file = document.getElementById("lectureFile").files[0];
-        const url = document.getElementById("lectureUrl").value.trim();
-        
-        if(!title) return alert("يرجى كتابة عنوان المحاضرة");
-
-        // إذا وضع رابط
-        if(url) {
-            saveLectureToDB(sub, title, num, url);
-        } 
-        // إذا اختار ملف
-        else if(file) {
-            const reader = new FileReader();
-            reader.onload = function(){
-                saveLectureToDB(sub, title, num, reader.result);
-            };
-            reader.readAsDataURL(file);
-        } else {
-            alert("يرجى اختيار ملف أو وضع رابط");
-        }
-    };
-
-    function saveLectureToDB(sub, title, num, content) {
-        push(ref(db, 'data/lectures'), { subject: sub, title, number: num, file: content })
-            .then(() => {
-                alert("✅ تم حفظ المحاضرة بنجاح");
-                document.getElementById("lectureTitle").value = "";
-                document.getElementById("lectureNumber").value = "";
-                document.getElementById("lectureUrl").value = "";
-                document.getElementById("lectureFile").value = "";
-            })
-            .catch(e => alert("خطأ: " + e.message));
+   window.addLecture = () => {
+    // 1. منسحب القيم من الخانات (اسم المادة، العنوان، الرقم، والرابط)
+    const sub = document.getElementById("lectureSubject").value;
+    const title = document.getElementById("lectureTitle").value.trim();
+    const num = document.getElementById("lectureNumber").value;
+    const url = document.getElementById("lectureUrl").value.trim();
+    
+    // 2. التحقق من أن المستخدم وضع عنوان ورابط (شرط أساسي)
+    if(!title || !url) {
+        return alert("يرجى كتابة العنوان ووضع رابط المحاضرة (مثلاً رابط من Google Drive)");
     }
 
+    // 3. حفظ البيانات في Firebase (منبعت الرابط فقط وليس الملف نفسه)
+    push(ref(db, 'data/lectures'), { 
+        subject: sub, 
+        title: title, 
+        number: num, 
+        file: url // هون خزنّا الرابط كنص بسيط، وهاد سر السرعة!
+    })
+    .then(() => {
+        // 4. رسالة نجاح وتفريغ الخانات
+        alert("✅ تم إضافة المحاضرة بنجاح");
+        document.getElementById("lectureTitle").value = "";
+        document.getElementById("lectureNumber").value = "";
+        document.getElementById("lectureUrl").value = "";
+    })
+    .catch(e => alert("خطأ في الاتصال: " + e.message));
+   };  
+  
     // -- Content Navigation --
     window.openSubject = (name) => {
         currentSubjectName = name;

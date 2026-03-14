@@ -190,18 +190,27 @@
             <select id="subjectSemester"><option value="1">الفصل الأول</option><option value="2">الفصل الثاني</option></select>
             <button class="bigBtn" style="width:100%; margin:0;" onclick="addSubject()">حفظ المادة</button>
         </div>
-
-        <div class="panel">
-            <h3>📄 رفع محاضرة</h3>
-            <select id="lectureSubject"></select>
-            <input id="lectureTitle" placeholder="عنوان المحاضرة">
-            <input id="lectureNumber" type="number" placeholder="رقمها">
-            <p style="font-size: 0.8rem; color: var(--primary); margin: 5px 0;">خيار 1: ارفع ملف (للملفات الصغيرة)</p>
-            <input type="file" id="lectureFile" accept=".pdf,.doc,.docx">
-            <p style="font-size: 0.8rem; color: var(--secondary); margin: 5px 0;">أو خيار 2: ضع رابط (للملفات الكبيرة)</p>
-            <input id="lectureUrl" placeholder="رابط المحاضرة (Google Drive مثلاً)">
-            <button class="bigBtn" style="width:100%; margin:10px 0 0 0;" onclick="addLecture()">حفظ المحاضرة</button>
+       <div class="panel">
+    <h3>📄 إضافة محاضرة جديدة</h3>
+    
+    <label style="font-size: 0.9rem; color: var(--text-muted);">اختر المادة:</label>
+    <select id="lectureSubject"></select>
+    
+    <input id="lectureTitle" placeholder="عنوان المحاضرة (مثلاً: المحاضرة الأولى)">
+    <input id="lectureNumber" type="number" placeholder="رقم المحاضرة (ترتيبها)">
+    
+    <div style="background: rgba(79, 70, 229, 0.1); padding: 10px; border-radius: 10px; margin-top: 10px;">
+        <p style="font-size: 0.85rem; color: var(--primary); margin: 0 0 5px 0; font-weight: bold;">
+            🔗 رابط الملف (Google Drive أو Telegram):
+        </p>
+        <input id="lectureUrl" placeholder="ضع الرابط هنا...">
+    </div>
+    
+    <button class="bigBtn" style="width:100%; margin:15px 0 0 0; background: var(--primary); color: white;" onclick="addLecture()">
+        حفظ المحاضرة في الموقع ✅
+    </button>
         </div>
+       
 
         <div class="panel">
             <h3>🔔 نشر خبر</h3>

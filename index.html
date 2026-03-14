@@ -194,8 +194,11 @@
             <select id="lectureSubject"></select>
             <input id="lectureTitle" placeholder="عنوان المحاضرة">
             <input id="lectureNumber" type="number" placeholder="رقمها">
+            <p style="font-size: 0.8rem; color: var(--primary); margin: 5px 0;">خيار 1: ارفع ملف (للملفات الصغيرة)</p>
             <input type="file" id="lectureFile" accept=".pdf,.doc,.docx">
-            <button class="bigBtn" style="width:100%; margin:0;" onclick="addLecture()">رفع الملف</button>
+            <p style="font-size: 0.8rem; color: var(--secondary); margin: 5px 0;">أو خيار 2: ضع رابط (للملفات الكبيرة)</p>
+            <input id="lectureUrl" placeholder="رابط المحاضرة (Google Drive مثلاً)">
+            <button class="bigBtn" style="width:100%; margin:10px 0 0 0;" onclick="addLecture()">حفظ المحاضرة</button>
         </div>
 
         <div class="panel">
@@ -332,15 +335,37 @@
         const title = document.getElementById("lectureTitle").value.trim();
         const num = document.getElementById("lectureNumber").value;
         const file = document.getElementById("lectureFile").files[0];
-        if(!title || !file) return alert("أكمل البيانات");
+        const url = document.getElementById("lectureUrl").value.trim();
+        
+        if(!title) return alert("يرجى كتابة عنوان المحاضرة");
 
-        const reader = new FileReader();
-        reader.onload = function(){
-            push(ref(db, 'data/lectures'), { subject: sub, title, number: num, file: reader.result })
-                .then(() => alert("تم الرفع بنجاح"));
-        };
-        reader.readAsDataURL(file);
+        // إذا وضع رابط
+        if(url) {
+            saveLectureToDB(sub, title, num, url);
+        } 
+        // إذا اختار ملف
+        else if(file) {
+            const reader = new FileReader();
+            reader.onload = function(){
+                saveLectureToDB(sub, title, num, reader.result);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            alert("يرجى اختيار ملف أو وضع رابط");
+        }
     };
+
+    function saveLectureToDB(sub, title, num, content) {
+        push(ref(db, 'data/lectures'), { subject: sub, title, number: num, file: content })
+            .then(() => {
+                alert("✅ تم حفظ المحاضرة بنجاح");
+                document.getElementById("lectureTitle").value = "";
+                document.getElementById("lectureNumber").value = "";
+                document.getElementById("lectureUrl").value = "";
+                document.getElementById("lectureFile").value = "";
+            })
+            .catch(e => alert("خطأ: " + e.message));
+    }
 
     // -- Content Navigation --
     window.openSubject = (name) => {
@@ -358,7 +383,7 @@
             filtered.forEach(l => {
                 let li = document.createElement("li");
                 li.innerHTML = `<div><b>${l.title}</b><br><small>رقم: ${l.number}</small></div>
-                                <button onclick="window.open('${l.file}')" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:12px; cursor:pointer;">تحميل ⬇</button>`;
+                                <button onclick="window.open('${l.file}')" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:12px; cursor:pointer;">فتح ⬇</button>`;
                 list.appendChild(li);
             });
         });

@@ -237,11 +237,11 @@
 </section>
 
 <footer>✦ بإشراف صديقكم عمر زينو ✦</footer>
-
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
     const firebaseConfig = {
         apiKey: "AIzaSyBBJHEzkS3E9dDqoKufnHovM2F2zZB5Qgo",
         authDomain: "myuniversityproject-cc06b.firebaseapp.com",
@@ -267,28 +267,27 @@ import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/fir
 
     window.toggleTheme = () => { document.body.classList.toggle("dark"); };
 
-   window.login = () => {
-    const email = document.getElementById("adminEmail").value;
-    const pass = document.getElementById("pass").value;
-    const loginBtn = document.querySelector("#login .bigBtn");
+    window.login = () => {
+        const email = document.getElementById("adminEmail").value;
+        const pass = document.getElementById("pass").value;
+        const loginBtn = document.querySelector("#login .bigBtn");
 
-    // نغير نص الزر عشان المستخدم يعرف إنو الطلب عم يتالج
-    const originalText = loginBtn.textContent;
-    loginBtn.textContent = "جاري التحقق... ⏳";
-    loginBtn.disabled = true;
+        const originalText = loginBtn.textContent;
+        loginBtn.textContent = "جاري التحقق... ⏳";
+        loginBtn.disabled = true;
 
-    signInWithEmailAndPassword(auth, email, pass)
-        .then(() => {
-            loginBtn.textContent = originalText;
-            loginBtn.disabled = false;
-            showPage("admin");
-        })
-        .catch((error) => {
-            loginBtn.textContent = originalText;
-            loginBtn.disabled = false;
-            alert("فشل الدخول: تأكد من الإيميل وكلمة السر");
-        });
-  };
+        signInWithEmailAndPassword(auth, email, pass)
+            .then(() => {
+                loginBtn.textContent = originalText;
+                loginBtn.disabled = false;
+                window.showPage("admin");
+            })
+            .catch((error) => {
+                loginBtn.textContent = originalText;
+                loginBtn.disabled = false;
+                alert("فشل الدخول: تأكد من الإيميل وكلمة السر");
+            });
+    };
 
     // -- Database Sync --
     onValue(ref(db, 'data'), (snapshot) => {
@@ -307,7 +306,7 @@ import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/fir
             const s = subs[id];
             let d = document.createElement("div"); d.className="card"; 
             d.innerHTML=`<div style="font-size:1.5rem">📖</div><strong>${s.name}</strong>`;
-            d.onclick=()=>openSubject(s.name);
+            d.onclick=()=>window.openSubject(s.name);
             if(s.semester=="1") s1.appendChild(d); else s2.appendChild(d);
             
             let o = document.createElement("option"); o.value=s.name; o.textContent=s.name;
@@ -343,76 +342,54 @@ import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/fir
             dNews.innerHTML += `<option value="${id}">${data.news[id].text}</option>`;
         });
     }
-     // -- Admin Actions --
+
+    // -- Admin Actions --
     window.addSubject = () => {
         const nameInput = document.getElementById("subjectName");
         const name = nameInput.value.trim();
         const sem = document.getElementById("subjectSemester").value;
 
         if(name) {
-            // إضافة تنبيه بسيط في الـ Console عشان نعرف إننا ضغطنا الزر
-            console.log("جاري محاولة إضافة مادة...");
-
-            push(ref(db, 'data/subjects'), { 
-                name: name, 
-                semester: sem 
-            })
-            .then(() => {
-                // هاد التنبيه ضروري عشان تعرف إن العملية نجحت فوراً
-                alert("✅ تمت إضافة المادة بنجاح");
-                nameInput.value = ""; 
-            })
-            .catch((error) => {
-                // إذا في مشكلة بالنت أو الصلاحيات، هاد السطر رح يخبرك شو هي
-                alert("❌ فشل الحفظ: " + error.message);
-                console.error(error);
-            });
-        } else {
-            alert("يرجى كتابة اسم المادة أولاً!");
-        }
+            push(ref(db, 'data/subjects'), { name: name, semester: sem })
+                .then(() => {
+                    alert("✅ تمت إضافة المادة");
+                    nameInput.value = "";
+                })
+                .catch(e => alert(e.message));
+        } else { alert("اكتب اسم المادة!"); }
     };
-    
+
+    window.addLecture = () => {
+        const sub = document.getElementById("lectureSubject").value;
+        const title = document.getElementById("lectureTitle").value.trim();
+        const num = document.getElementById("lectureNumber").value;
+        const url = document.getElementById("lectureUrl").value.trim();
+        
+        if(!title || !url) return alert("اكمل البيانات!");
+
+        push(ref(db, 'data/lectures'), { subject: sub, title: title, number: num, file: url })
+            .then(() => {
+                alert("✅ تم إضافة المحاضرة");
+                document.getElementById("lectureTitle").value = "";
+                document.getElementById("lectureUrl").value = "";
+            });
+    };
 
     window.addNews = () => {
         const sem = document.getElementById("newsSemester").value;
         const text = document.getElementById("newsText").value.trim();
         if(text) push(ref(db, 'data/news'), { semester: sem, text })
-            .then(() => document.getElementById("newsText").value = "");
+            .then(() => {
+                alert("✅ تم نشر الخبر");
+                document.getElementById("newsText").value = "";
+            });
     };
-   window.addLecture = () => {
-    // 1. منسحب القيم من الخانات (اسم المادة، العنوان، الرقم، والرابط)
-    const sub = document.getElementById("lectureSubject").value;
-    const title = document.getElementById("lectureTitle").value.trim();
-    const num = document.getElementById("lectureNumber").value;
-    const url = document.getElementById("lectureUrl").value.trim();
-    
-    // 2. التحقق من أن المستخدم وضع عنوان ورابط (شرط أساسي)
-    if(!title || !url) {
-        return alert("يرجى كتابة العنوان ووضع رابط المحاضرة (مثلاً رابط من Google Drive)");
-    }
 
-    // 3. حفظ البيانات في Firebase (منبعت الرابط فقط وليس الملف نفسه)
-    push(ref(db, 'data/lectures'), { 
-        subject: sub, 
-        title: title, 
-        number: num, 
-        file: url // هون خزنّا الرابط كنص بسيط، وهاد سر السرعة!
-    })
-    .then(() => {
-        // 4. رسالة نجاح وتفريغ الخانات
-        alert("✅ تم إضافة المحاضرة بنجاح");
-        document.getElementById("lectureTitle").value = "";
-        document.getElementById("lectureNumber").value = "";
-        document.getElementById("lectureUrl").value = "";
-    })
-    .catch(e => alert("خطأ في الاتصال: " + e.message));
-   };  
-  
-    // -- Content Navigation --
+    // -- Navigation & Deletion --
     window.openSubject = (name) => {
         currentSubjectName = name;
         document.getElementById("subjectTitle").textContent = name;
-        showPage("subjectPage");
+        window.showPage("subjectPage");
         loadLectures();
     };
 
@@ -431,14 +408,10 @@ import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/fir
     }
 
     window.goBack = () => {
-        onValue(ref(db, 'data/subjects'), (snap) => {
-            const subs = Object.values(snap.val() || {});
-            const s = subs.find(x => x.name == currentSubjectName);
-            showPage(s && s.semester == "2" ? "semester2" : "semester1");
-        }, { onlyOnce: true });
+        // العودة لآخر صفحة فصل كانت مفتوحة
+        window.showPage("semester1"); 
     };
 
-    // -- Deletion --
     window.deleteSubjectAdmin = () => {
         const id = document.getElementById("deleteSubjectList").value;
         if(id && confirm("حذف المادة؟")) remove(ref(db, `data/subjects/${id}`));
@@ -457,5 +430,6 @@ import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/fir
         items.forEach(i => i.style.display = i.textContent.toLowerCase().includes(t.toLowerCase()) ? "flex" : "none");
     };
 </script>
+
 </body>
 </html>

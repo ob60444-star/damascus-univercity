@@ -349,9 +349,14 @@ window.addLecture = async () => {
 
 // --- جلب البيانات وتوزيعها ---
 onValue(ref(db, 'data'), (snapshot) => {
-    globalData = snapshot.val() || { subjects: {}, news: {}, lectures: {} };
-    renderSubjects(globalData.subjects || {});
-    renderNews(globalData.news || {});
+    const data = snapshot.val() || {};
+
+    globalData.subjects = data.subjects || {};
+    globalData.news = data.news || {};
+    globalData.lectures = data.lectures || {};
+
+    renderSubjects(globalData.subjects);
+    renderNews(globalData.news);
     populateDeleteDropdowns();
 });
 

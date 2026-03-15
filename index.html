@@ -343,14 +343,35 @@ import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/fir
             dNews.innerHTML += `<option value="${id}">${data.news[id].text}</option>`;
         });
     }
-
-    // -- Admin Actions --
+     // -- Admin Actions --
     window.addSubject = () => {
-        const name = document.getElementById("subjectName").value.trim();
+        const nameInput = document.getElementById("subjectName");
+        const name = nameInput.value.trim();
         const sem = document.getElementById("subjectSemester").value;
-        if(name) push(ref(db, 'data/subjects'), { name, semester: sem })
-            .then(() => document.getElementById("subjectName").value = "");
+
+        if(name) {
+            // إضافة تنبيه بسيط في الـ Console عشان نعرف إننا ضغطنا الزر
+            console.log("جاري محاولة إضافة مادة...");
+
+            push(ref(db, 'data/subjects'), { 
+                name: name, 
+                semester: sem 
+            })
+            .then(() => {
+                // هاد التنبيه ضروري عشان تعرف إن العملية نجحت فوراً
+                alert("✅ تمت إضافة المادة بنجاح");
+                nameInput.value = ""; 
+            })
+            .catch((error) => {
+                // إذا في مشكلة بالنت أو الصلاحيات، هاد السطر رح يخبرك شو هي
+                alert("❌ فشل الحفظ: " + error.message);
+                console.error(error);
+            });
+        } else {
+            alert("يرجى كتابة اسم المادة أولاً!");
+        }
     };
+    
 
     window.addNews = () => {
         const sem = document.getElementById("newsSemester").value;

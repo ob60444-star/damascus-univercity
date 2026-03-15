@@ -2,7 +2,7 @@
   "name": "تقويم الكلام واللغة - كلية العلوم الصحية",
   "short_name": "النطق واللغة",
   "description": "المنصة الأكاديمية لمقررات ومحاضرات القسم",
-  "start_url": "/",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#4f46e5",

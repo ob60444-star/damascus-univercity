@@ -188,7 +188,7 @@
             <h3>➕ مادة جديدة</h3>
             <input id="subjectName" placeholder="اسم المادة">
             <select id="subjectSemester"><option value="1">الفصل الأول</option><option value="2">الفصل الثاني</option></select>
-            <button class="bigBtn" style="width:100%; margin:0;" onclick="addSubject()">حفظ المادة</button>
+           <button type="button" class="bigBtn" style="width:100%; margin:0;" onclick="addSubject()">حفظ المادة</button>
         </div>
        <div class="panel">
     <h3>📄 إضافة محاضرة جديدة</h3>
@@ -205,18 +205,16 @@
         </p>
         <input id="lectureUrl" placeholder="ضع الرابط هنا...">
     </div>
-    
-    <button class="bigBtn" style="width:100%; margin:15px 0 0 0; background: var(--primary); color: white;" onclick="addLecture()">
-        حفظ المحاضرة في الموقع ✅
-    </button>
-        </div>
+     <button type="button" class="bigBtn" style="width:100%; margin:15px 0 0 0; background: var(--primary); color: white;" onclick="addLecture()">حفظ المحاضرة ✅</button>
+   
+      </div>
        
 
         <div class="panel">
             <h3>🔔 نشر خبر</h3>
             <select id="newsSemester"><option value="1">فصل 1</option><option value="2">فصل 2</option></select>
             <input id="newsText" placeholder="نص الخبر الجديد">
-            <button class="bigBtn" style="width:100%; margin:0;" onclick="addNews()">نشر الآن</button>
+            <button type="button" class="bigBtn" style="width:100%; margin:0;" onclick="addNews()">نشر الآن</button>
         </div>
 
         <div class="panel" style="border-top: 5px solid #ef4444;">

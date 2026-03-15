@@ -80,6 +80,7 @@
             border: 1px solid var(--glass-border);
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
             position: relative; overflow: hidden;
+            cursor: pointer;
         }
 
         /* Shine Effect */
@@ -111,6 +112,7 @@
             background: var(--card-bg); margin: 12px auto; padding: 20px;
             border-radius: 18px; display: flex; justify-content: space-between;
             align-items: center; max-width: 700px; border-right: 6px solid var(--primary);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
         footer { text-align: center; padding: 40px; color: var(--text-muted); font-weight: 600; }
@@ -143,8 +145,8 @@
 <section id="home" class="page active">
     <div style="text-align:center">
         <h2>مرحباً بكم زملائي الأعزاء</h2>
-        <button class="bigBtn" onclick="showPage('semester1')">📂 مواد الفصل الأول</button>
-        <button class="bigBtn" onclick="showPage('semester2')">📂 مواد الفصل الثاني</button>
+        <button type="button" class="bigBtn" onclick="showPage('semester1')">📂 مواد الفصل الأول</button>
+        <button type="button" class="bigBtn" onclick="showPage('semester2')">📂 مواد الفصل الثاني</button>
     </div>
 </section>
 
@@ -164,51 +166,44 @@
 
 <section id="subjectPage" class="page">
     <div style="text-align: center; max-width: 800px; margin: auto;">
-        <button onclick="goBack()" style="background:none; border:none; color:var(--primary); cursor:pointer; font-weight:bold; font-size:1.1rem">⬅ عودة للمواد</button>
+        <button type="button" onclick="showPage('home')" style="background:none; border:none; color:var(--primary); cursor:pointer; font-weight:bold; font-size:1.1rem">⬅ عودة للرئيسية</button>
         <h2 id="subjectTitle" style="color:var(--primary); font-size: 2rem;"></h2>
-        <input type="text" placeholder="🔍 ابحث عن محاضرة بالاسم..." onkeyup="searchLecture(this.value)">
+        <input type="text" id="searchInput" placeholder="🔍 ابحث عن محاضرة بالاسم..." onkeyup="searchLecture(this.value)">
         <ul id="lectures" style="padding:0; list-style:none;"></ul>
     </div>
 </section>
+
 <section id="login" class="page">
     <div class="card" style="max-width: 400px; margin: auto; text-align: center;">
         <h3>دخول المشرف 🔐</h3>
         <input type="email" id="adminEmail" placeholder="البريد الإلكتروني للمشرف">
         <input type="password" id="pass" placeholder="كلمة السر">
-        <button class="bigBtn" style="width:100%; margin: 20px 0 0 0;" onclick="login()">دخول</button>
+        <button type="button" class="bigBtn" style="width:100%; margin: 20px 0 0 0;" onclick="login()">دخول</button>
     </div>
-</section>
-
 </section>
 
 <section id="admin" class="page">
     <h2 style="text-align: center;">لوحة التحكم الشاملة ⚙️</h2>
     <div class="grid-container">
+        
         <div class="panel">
             <h3>➕ مادة جديدة</h3>
             <input id="subjectName" placeholder="اسم المادة">
             <select id="subjectSemester"><option value="1">الفصل الأول</option><option value="2">الفصل الثاني</option></select>
-           <button type="button" class="bigBtn" style="width:100%; margin:0;" onclick="addSubject()">حفظ المادة</button>
+            <button type="button" class="bigBtn" style="width:100%; margin:0;" onclick="addSubject()">حفظ المادة</button>
         </div>
-       <div class="panel">
-    <h3>📄 إضافة محاضرة جديدة</h3>
-    
-    <label style="font-size: 0.9rem; color: var(--text-muted);">اختر المادة:</label>
-    <select id="lectureSubject"></select>
-    
-    <input id="lectureTitle" placeholder="عنوان المحاضرة (مثلاً: المحاضرة الأولى)">
-    <input id="lectureNumber" type="number" placeholder="رقم المحاضرة (ترتيبها)">
-    
-    <div style="background: rgba(79, 70, 229, 0.1); padding: 10px; border-radius: 10px; margin-top: 10px;">
-        <p style="font-size: 0.85rem; color: var(--primary); margin: 0 0 5px 0; font-weight: bold;">
-            🔗 رابط الملف (Google Drive أو Telegram):
-        </p>
-        <input id="lectureUrl" placeholder="ضع الرابط هنا...">
-    </div>
-     <button type="button" class="bigBtn" style="width:100%; margin:15px 0 0 0; background: var(--primary); color: white;" onclick="addLecture()">حفظ المحاضرة ✅</button>
-   
-      </div>
-       
+        
+        <div class="panel">
+            <h3>📄 إضافة محاضرة جديدة</h3>
+            <label style="font-size: 0.9rem; color: var(--text-muted);">اختر المادة:</label>
+            <select id="lectureSubject"></select>
+            <input id="lectureTitle" placeholder="عنوان المحاضرة (مثلاً: المحاضرة الأولى)">
+            <div style="background: rgba(79, 70, 229, 0.1); padding: 10px; border-radius: 10px; margin-top: 10px;">
+                <p style="font-size: 0.85rem; color: var(--primary); margin: 0 0 5px 0; font-weight: bold;">🔗 رابط الملف (Drive أو Telegram):</p>
+                <input id="lectureUrl" placeholder="ضع الرابط هنا...">
+            </div>
+            <button type="button" class="bigBtn" style="width:100%; margin:15px 0 0 0; background: var(--primary); color: white;" onclick="addLecture()">حفظ المحاضرة ✅</button>
+        </div>
 
         <div class="panel">
             <h3>🔔 نشر خبر</h3>
@@ -219,25 +214,28 @@
 
         <div class="panel" style="border-top: 5px solid #ef4444;">
             <h3>🗑️ إدارة المحتوى (حذف)</h3>
+            
             <label>حذف مادة:</label>
             <select id="deleteSubjectList"></select>
-            <button onclick="deleteSubjectAdmin()" style="background:#ef4444; color:white; border:none; padding:10px; border-radius:10px; width:100%; cursor:pointer; margin-bottom:15px;">حذف مادة</button>
+            <button type="button" onclick="deleteItem('subjects', 'deleteSubjectList')" style="background:#ef4444; color:white; border:none; padding:10px; border-radius:10px; width:100%; cursor:pointer; margin-bottom:15px;">حذف المادة</button>
             
             <label>حذف محاضرة:</label>
             <select id="deleteLectureList"></select>
-            <button onclick="deleteLectureAdmin()" style="background:#ef4444; color:white; border:none; padding:10px; border-radius:10px; width:100%; cursor:pointer; margin-bottom:15px;">حذف محاضرة</button>
+            <button type="button" onclick="deleteItem('lectures', 'deleteLectureList')" style="background:#ef4444; color:white; border:none; padding:10px; border-radius:10px; width:100%; cursor:pointer; margin-bottom:15px;">حذف المحاضرة</button>
 
             <label>حذف خبر:</label>
             <select id="deleteNewsList"></select>
-            <button onclick="deleteNewsAdmin()" style="background:#ef4444; color:white; border:none; padding:10px; border-radius:10px; width:100%; cursor:pointer;">حذف الخبر</button>
+            <button type="button" onclick="deleteItem('news', 'deleteNewsList')" style="background:#ef4444; color:white; border:none; padding:10px; border-radius:10px; width:100%; cursor:pointer;">حذف الخبر</button>
         </div>
+
     </div>
 </section>
 
 <footer>✦ بإشراف صديقكم عمر زينو ✦</footer>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
@@ -250,57 +248,80 @@ const firebaseConfig = {
     appId: "1:134940725653:web:90aa4550a997d95731669c"
 };
 
-// 1. تشغيل Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
+let globalData = { subjects: {}, news: {}, lectures: {} }; // لتخزين البيانات محلياً
 
-// 2. التحقق من الاتصال (اختبار ذاتي)
-const connectedRef = ref(db, ".info/connected");
-onValue(connectedRef, (snap) => {
-    if (snap.val() === true) console.log("✅ متصل بقاعدة البيانات");
-    else console.warn("❌ غير متصل بالإنترنت أو بالقاعدة");
-});
+// دالة التنقل الآمنة
+window.showPage = (id) => {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    const target = document.getElementById(id);
+    if(target) target.classList.add("active");
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
 
-// 3. دالة الدخول المحدثة
+window.toggleTheme = () => document.body.classList.toggle("dark");
+
+// تسجيل الدخول
 window.login = () => {
     const email = document.getElementById("adminEmail").value.trim();
     const pass = document.getElementById("pass").value.trim();
-    if(!email || !pass) return alert("اكتب البيانات");
+    if(!email || !pass) return alert("اكتب الإيميل وكلمة السر!");
 
     signInWithEmailAndPassword(auth, email, pass)
         .then(() => alert("✅ تم الدخول بنجاح!"))
-        .catch(e => alert("❌ خطأ في الدخول: " + e.message));
+        .catch(e => alert("❌ خطأ: " + e.message));
 };
 
-// مراقبة حالة المستخدم لفتح لوحة التحكم تلقائياً
 onAuthStateChanged(auth, (user) => {
     if (user) window.showPage("admin");
 });
 
-// 4. دالة إضافة المادة (نسخة مضادة للأخطاء)
+// --- دوال الإضافة ---
 window.addSubject = async () => {
-    const nameInput = document.getElementById("subjectName");
-    const name = nameInput.value.trim();
+    const name = document.getElementById("subjectName").value.trim();
     const sem = document.getElementById("subjectSemester").value;
-
-    if (!name) return alert("اكتبي اسم المادة");
-
+    if (!name) return alert("اكتب اسم المادة");
     try {
         await push(ref(db, 'data/subjects'), { name, semester: sem });
-        alert("✅ أخيراً! انحفظت المادة بنجاح");
-        nameInput.value = "";
-    } catch (e) {
-        alert("❌ فشل الحفظ! السبب غالباً هو 'Rules' في Firebase. تأكدي أنها true.");
-        console.error(e);
-    }
+        alert("✅ تمت إضافة المادة بنجاح");
+        document.getElementById("subjectName").value = "";
+    } catch (e) { alert("فشل الحفظ: تأكد من الصلاحيات"); }
 };
 
-// 5. جلب البيانات وعرضها
+window.addNews = async () => {
+    const text = document.getElementById("newsText").value.trim();
+    const sem = document.getElementById("newsSemester").value;
+    if (!text) return alert("اكتب نص الخبر");
+    try {
+        await push(ref(db, 'data/news'), { text, semester: sem });
+        alert("✅ تم نشر الخبر");
+        document.getElementById("newsText").value = "";
+    } catch (e) { alert("فشل النشر!"); }
+};
+
+window.addLecture = async () => {
+    const subId = document.getElementById("lectureSubject").value;
+    const title = document.getElementById("lectureTitle").value.trim();
+    const url = document.getElementById("lectureUrl").value.trim();
+    
+    if (!subId || !title || !url) return alert("الرجاء ملء كل الحقول!");
+    
+    try {
+        await push(ref(db, 'data/lectures'), { subjectId: subId, title, url });
+        alert("✅ تم حفظ المحاضرة");
+        document.getElementById("lectureTitle").value = "";
+        document.getElementById("lectureUrl").value = "";
+    } catch (e) { alert("فشل الحفظ!"); }
+};
+
+// --- جلب البيانات وتوزيعها ---
 onValue(ref(db, 'data'), (snapshot) => {
-    const data = snapshot.val() || {};
-    renderSubjects(data.subjects || {});
-    renderNews(data.news || {});
+    globalData = snapshot.val() || { subjects: {}, news: {}, lectures: {} };
+    renderSubjects(globalData.subjects || {});
+    renderNews(globalData.news || {});
+    populateDeleteDropdowns();
 });
 
 function renderSubjects(subs) {
@@ -310,32 +331,93 @@ function renderSubjects(subs) {
     
     Object.keys(subs).forEach(id => {
         const s = subs[id];
+        // كروت المواد
         let d = document.createElement("div"); d.className="card"; 
         d.innerHTML=`<div style="font-size:1.5rem">📖</div><strong>${s.name}</strong>`;
-        d.onclick=()=>window.openSubject(s.name);
+        d.onclick = () => window.openSubject(id, s.name); // نمرر الـ id
         if(s.semester=="1") s1.appendChild(d); else s2.appendChild(d);
         
-        let o = document.createElement("option"); o.value=s.name; o.textContent=s.name;
+        // قائمة اختيار المادة في قسم المحاضرات
+        let o = document.createElement("option"); o.value=id; o.textContent=s.name;
         lSub.appendChild(o);
     });
 }
 
-// 6. التنقل بين الصفحات
-window.showPage = (id) => {
-    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
-    window.scrollTo(0,0);
-};
+function renderNews(news) {
+    const n1 = document.getElementById("news1"), n2 = document.getElementById("news2");
+    n1.innerHTML = ""; n2.innerHTML = "";
+    Object.keys(news).forEach(id => {
+        const n = news[id];
+        let d = document.createElement("div"); d.className="card"; d.style.borderRight="5px solid var(--primary)";
+        d.innerHTML=`<p>📢 ${n.text}</p>`;
+        if(n.semester=="1") n1.appendChild(d); else n2.appendChild(d);
+    });
+}
 
-window.openSubject = (name) => {
+// --- قسم عرض المحاضرات ---
+window.currentSubjectId = "";
+window.openSubject = (id, name) => {
+    window.currentSubjectId = id;
     document.getElementById("subjectTitle").textContent = name;
+    document.getElementById("searchInput").value = "";
     window.showPage("subjectPage");
-    // هنا يتم جلب المحاضرات (يمكننا إضافتها لاحقاً)
+    renderLectures();
 };
 
-// تنبيه: أضفنا window لكل الدوال لضمان عملها مع HTML
-window.toggleTheme = () => document.body.classList.toggle("dark");
-</script>
+window.renderLectures = (filterText = "") => {
+    const ul = document.getElementById("lectures");
+    ul.innerHTML = "";
+    const allLectures = globalData.lectures || {};
+    
+    Object.keys(allLectures).forEach(id => {
+        const lec = allLectures[id];
+        if (lec.subjectId === window.currentSubjectId && lec.title.includes(filterText)) {
+            let li = document.createElement("li");
+            li.innerHTML = `<strong>${lec.title}</strong> <a href="${lec.url}" target="_blank" class="bigBtn" style="padding:8px 15px; font-size:0.9rem; text-decoration:none;">تحميل / مشاهدة</a>`;
+            ul.appendChild(li);
+        }
+    });
+    if(ul.innerHTML === "") ul.innerHTML = "<p>لم يتم رفع محاضرات لهذه المادة بعد.</p>";
+};
 
+window.searchLecture = (val) => window.renderLectures(val);
+
+// --- دوال الحذف الشاملة ---
+function populateDeleteDropdowns() {
+    const dSub = document.getElementById("deleteSubjectList");
+    const dLec = document.getElementById("deleteLectureList");
+    const dNews = document.getElementById("deleteNewsList");
+    
+    dSub.innerHTML = ""; dLec.innerHTML = ""; dNews.innerHTML = "";
+
+    // تعبئة المواد
+    const subs = globalData.subjects || {};
+    Object.keys(subs).forEach(id => dSub.innerHTML += `<option value="${id}">${subs[id].name}</option>`);
+
+    // تعبئة المحاضرات
+    const lecs = globalData.lectures || {};
+    Object.keys(lecs).forEach(id => {
+        const subName = subs[lecs[id].subjectId] ? subs[lecs[id].subjectId].name : "مادة محذوفة";
+        dLec.innerHTML += `<option value="${id}">${lecs[id].title} (${subName})</option>`;
+    });
+
+    // تعبئة الأخبار
+    const news = globalData.news || {};
+    Object.keys(news).forEach(id => dNews.innerHTML += `<option value="${id}">${news[id].text}</option>`);
+}
+
+window.deleteItem = async (type, dropdownId) => {
+    const id = document.getElementById(dropdownId).value;
+    if (!id) return alert("لا يوجد عناصر للحذف");
+    
+    if (confirm("هل أنت متأكد من الحذف النهائي؟")) {
+        try {
+            await remove(ref(db, `data/${type}/${id}`));
+            alert("✅ تم الحذف بنجاح");
+        } catch(e) { alert("❌ فشل الحذف. تأكد من صلاحياتك!"); }
+    }
+};
+
+</script>
 </body>
 </html>

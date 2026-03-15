@@ -347,26 +347,32 @@
     }
 
     // -- Admin Actions --
-    window.addSubject = () => {
-    const nameInput = document.getElementById("subjectName");
-    const name = nameInput.value.trim();
-    const sem = document.getElementById("subjectSemester").value;
+   window.addSubject = () => {
+        const nameInput = document.getElementById("subjectName");
+        const name = nameInput.value.trim();
+        const sem = document.getElementById("subjectSemester").value;
 
-    if(name) {
-        // انتبهي هون للمسار 'data/subjects'
-        push(ref(db, 'data/subjects'), { 
-            name: name, 
-            semester: sem 
-        })
-        .then(() => {
-            alert("✅ مبروك! انحفظت المادة.");
-            nameInput.value = "";
-        })
-        .catch((e) => alert("خطأ بالحفظ: " + e.message));
-    } else {
-        alert("اكتب اسم المادة أولاً!");
-    }
-};
+        if (name) {
+            // استخدام المسار المباشر لضمان وصول البيانات
+            const dbRef = ref(db, 'data/subjects');
+            
+            push(dbRef, {
+                name: name,
+                semester: sem
+            })
+            .then(() => {
+                alert("✅ أخيراً! تمت إضافة المادة بنجاح");
+                nameInput.value = ""; // تفريغ الخانة بعد النجاح
+            })
+            .catch((error) => {
+                // إذا في مشكلة بالصلاحيات رح تطلع هون فوراً
+                alert("❌ فشل الحفظ: " + error.message);
+                console.error(error);
+            });
+        } else {
+            alert("يرجى كتابة اسم المادة!");
+        }
+    };
 
     window.addLecture = () => {
         const sub = document.getElementById("lectureSubject").value;

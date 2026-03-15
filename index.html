@@ -302,14 +302,25 @@ window.logout = () => {
 
 // --- دوال الإضافة ---
 window.addSubject = async () => {
-    const name = document.getElementById("subjectName").value.trim();
+    const nameInput = document.getElementById("subjectName");
+    const name = nameInput.value.trim();
     const sem = document.getElementById("subjectSemester").value;
-    if (!name) return alert("اكتب اسم المادة");
+
+    if (!name) return alert("اكتبي اسم المادة أولاً!");
+
     try {
-        await push(ref(db, 'data/subjects'), { name, semester: sem });
-        alert("✅ تمت إضافة المادة بنجاح");
-        document.getElementById("subjectName").value = "";
-    } catch (e) { alert("فشل الحفظ: تأكد من الصلاحيات"); }
+        // تحديد المسار بدقة داخل 'data/subjects'
+        await push(ref(db, 'data/subjects'), { 
+            name: name, 
+            semester: sem 
+        });
+        
+        alert("✅ تمت إضافة المادة بنجاح!");
+        nameInput.value = ""; // تفريغ الحقل بعد النجاح
+    } catch (error) {
+        console.error("خطأ في Firebase:", error);
+        alert("❌ فشل الحفظ! السبب غالباً هو قواعد الحماية (Rules) في Firebase. تأكدي أنها تسمح بالكتابة.");
+    }
 };
 
 window.addNews = async () => {

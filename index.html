@@ -266,28 +266,33 @@
     };
 
     window.toggleTheme = () => { document.body.classList.toggle("dark"); };
-
     window.login = () => {
-        const email = document.getElementById("adminEmail").value;
-        const pass = document.getElementById("pass").value;
-        const loginBtn = document.querySelector("#login .bigBtn");
+    const email = document.getElementById("adminEmail").value.trim();
+    const pass = document.getElementById("pass").value.trim();
+    const loginBtn = document.querySelector("#login .bigBtn");
 
-        const originalText = loginBtn.textContent;
-        loginBtn.textContent = "جاري التحقق... ⏳";
-        loginBtn.disabled = true;
+    if(!email || !pass) return alert("اكتب الإيميل والباسورد");
 
-        signInWithEmailAndPassword(auth, email, pass)
-            .then(() => {
-                loginBtn.textContent = originalText;
-                loginBtn.disabled = false;
-                window.showPage("admin");
-            })
-            .catch((error) => {
-                loginBtn.textContent = originalText;
-                loginBtn.disabled = false;
-                alert("فشل الدخول: تأكد من الإيميل وكلمة السر");
-            });
-    };
+    loginBtn.textContent = "جاري التحقق... ⏳";
+    loginBtn.disabled = true;
+
+    // هون السر: الانتقال لصفحة الإدارة لازم يكون فقط "جوا" الـ .then
+    signInWithEmailAndPassword(auth, email, pass)
+        .then((userCredential) => {
+            alert("✅ تم الدخول بنجاح! أهلاً بك.");
+            window.showPage("admin"); // مارح تفتح الصفحة إلا إذا نجح الدخول فعلاً
+            loginBtn.textContent = "دخول";
+            loginBtn.disabled = false;
+        })
+        .catch((error) => {
+            loginBtn.textContent = "دخول";
+            loginBtn.disabled = false;
+            console.error(error.code);
+            alert("خطأ: " + error.message); 
+            // هون مارح يفتح صفحة الإدارة إذا في غلط
+        });
+};
+   
 
     // -- Database Sync --
     onValue(ref(db, 'data'), (snapshot) => {
@@ -345,19 +350,25 @@
 
     // -- Admin Actions --
     window.addSubject = () => {
-        const nameInput = document.getElementById("subjectName");
-        const name = nameInput.value.trim();
-        const sem = document.getElementById("subjectSemester").value;
+    const nameInput = document.getElementById("subjectName");
+    const name = nameInput.value.trim();
+    const sem = document.getElementById("subjectSemester").value;
 
-        if(name) {
-            push(ref(db, 'data/subjects'), { name: name, semester: sem })
-                .then(() => {
-                    alert("✅ تمت إضافة المادة");
-                    nameInput.value = "";
-                })
-                .catch(e => alert(e.message));
-        } else { alert("اكتب اسم المادة!"); }
-    };
+    if(name) {
+        // انتبهي هون للمسار 'data/subjects'
+        push(ref(db, 'data/subjects'), { 
+            name: name, 
+            semester: sem 
+        })
+        .then(() => {
+            alert("✅ مبروك! انحفظت المادة.");
+            nameInput.value = "";
+        })
+        .catch((e) => alert("خطأ بالحفظ: " + e.message));
+    } else {
+        alert("اكتب اسم المادة أولاً!");
+    }
+};
 
     window.addLecture = () => {
         const sub = document.getElementById("lectureSubject").value;

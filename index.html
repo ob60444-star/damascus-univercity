@@ -200,30 +200,6 @@
     </div>
 </section>
 
- <div id="savedFilesSection" class="updates-section">
-    <h3>📂 ملفاتي المحملة (للدراسة بدون نت)</h3>
-    <ul id="savedFilesList">
-        </ul>
-</div>
-
-<style>
-#savedFilesSection {
-    background: #fffbeb; /* لون مميز مختلف */
-    border-right: 5px solid #f59e0b;
-    display: none; /* مخفي في البداية، يظهر فقط إذا كان هناك ملفات */
-}
-.save-btn {
-    background: #10b981;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 12px;
-    margin-right: 10px;
-}
-</style>
-
 <section id="semester1" class="page">
     <h2>📚 مواد الفصل الدراسي الأول</h2>
     <div id="subjects1" class="grid-container"></div>
@@ -577,35 +553,5 @@ window.addEventListener("load", function() {
     }, 1500); 
 });
    </script>
-
- // وظيفة لحفظ المحاضرة
-function saveLecture(name, url) {
-    let saved = JSON.parse(localStorage.getItem('myLectures')) || [];
-    
-    // تأكدي إنها مو مضافة من قبل
-    if (!saved.find(item => item.url === url)) {
-        saved.push({ name: name, url: url });
-        localStorage.setItem('myLectures', JSON.stringify(saved));
-        alert('تمت الإضافة لملفاتك المحملة! ✅');
-        renderSavedFiles();
-    }
-}
-
-// وظيفة لعرض الملفات المحفوظة
-function renderSavedFiles() {
-    const list = document.getElementById('savedFilesList');
-    const section = document.getElementById('savedFilesSection');
-    let saved = JSON.parse(localStorage.getItem('myLectures')) || [];
-
-    if (saved.length > 0) {
-        section.style.display = "block";
-        list.innerHTML = saved.map(file => 
-            `<li><a href="${file.url}" target="_blank">${file.name}</a></li>`
-        ).join('');
-    }
-}
-
-// تشغيل الوظيفة أول ما يفتح الموقع
-renderSavedFiles();
 </body>
 </html>

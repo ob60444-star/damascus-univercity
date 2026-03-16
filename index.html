@@ -235,7 +235,45 @@
 <section id="admin" class="page">
     <button type="button" class="bigBtn" style="background: #ef4444;" onclick="logout()">تسجيل الخروج 🚪</button>
     <h2 style="text-align: center;">لوحة التحكم الشاملة ⚙️</h2>
-    <div class="grid-container">
+    <div class="grid-container"> 
+
+     <div class="search-container">
+    <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="ابحث عن مادة أو محاضرة...">
+</div>
+
+<style>
+.search-container {
+    margin: 20px auto;
+    width: 90%;
+    max-width: 500px;
+}
+#searchInput {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: 2px solid #4f46e5;
+    border-radius: 25px; /* شكل بيضوي عصري */
+    outline: none;
+    text-align: right;
+}
+</style>
+
+<script>
+function searchFunction() {
+    let input = document.getElementById('searchInput');
+    let filter = input.value.toLowerCase();
+    let cards = document.getElementsByClassName('lecture-card'); // افترضنا إن كل محاضرة بـ div اسمه lecture-card
+
+    for (let i = 0; i < cards.length; i++) {
+        let title = cards[i].innerText;
+        if (title.toLowerCase().indexOf(filter) > -1) {
+            cards[i].style.display = "";
+        } else {
+            cards[i].style.display = "none";
+        }
+    }
+}
+</script>
         
         <div class="panel">
             <h3>➕ مادة جديدة</h3>

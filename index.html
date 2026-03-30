@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>كلية العلوم الصحية - تقويم الكلام واللغة</title>
 
@@ -44,13 +44,11 @@
             overflow-x: hidden;
         }
 
-        /* Animations */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Glass Nav */
         nav {
             position: sticky; top: 0; z-index: 1000;
             backdrop-filter: blur(15px);
@@ -114,7 +112,7 @@
         }
         input:focus { border-color: var(--primary); outline: none; }
 
-        #lectures li {
+        #lectures li, #voicesList li {
             background: var(--card-bg); margin: 12px auto; padding: 20px;
             border-radius: 18px; display: flex; flex-direction: column; 
             max-width: 700px; border-right: 6px solid var(--primary);
@@ -130,6 +128,36 @@
             nav ul { font-size: 0.8rem; margin-top: 10px; }
             header { padding: 50px 20px; clip-path: none; }
         }
+
+        #loader {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: var(--bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(79, 70, 229, 0.1);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-text {
+            margin-top: 20px; font-family: Arial, sans-serif;
+            color: var(--primary); font-weight: bold; text-align: center;
+        }
+        .loader-hidden { opacity: 0; visibility: hidden; }
     </style>
 </head>
 <body>
@@ -138,39 +166,6 @@
     <div class="spinner"></div>
     <div class="loading-text">جاري تحضير المحاضرات...</div>
 </div>
-
-<style>
-#loader {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-color: var(--bg);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    transition: opacity 0.5s ease;
-}
-/* ستايل الدائرة الدوارة */
-.spinner {
-    width: 50px;
-    height: 50px;
-    border: 5px solid rgba(79, 70, 229, 0.1);
-    border-top: 5px solid var(--primary);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-.loading-text {
-    margin-top: 20px; font-family: Arial, sans-serif;
-    color: var(--primary); font-weight: bold; text-align: center;
-}
-.loader-hidden { opacity: 0; visibility: hidden; }
-</style>
 
 <nav>
     <h3 style="margin:0">كلية العلوم الصحية ⚕️</h3>
@@ -213,9 +208,14 @@
 <section id="subjectPage" class="page">
     <div style="text-align: center; max-width: 800px; margin: auto;">
         <button type="button" onclick="showPage('home')" style="background:none; border:none; color:var(--primary); cursor:pointer; font-weight:bold; font-size:1.1rem">⬅ عودة للرئيسية</button>
-        <h2 id="subjectTitle" style="color:var(--primary); font-size: 2rem;"></h2>
-        <input type="text" id="searchInput" placeholder="🔍 ابحث عن محاضرة بالاسم..." onkeyup="searchLecture(this.value)">
+        <h2 id="subjectTitle" style="color:var(--primary); font-size: 2rem; margin-bottom: 20px;"></h2>
+        <input type="text" id="searchInput" placeholder="🔍 ابحث عن محاضرة أو فويس..." onkeyup="searchAll(this.value)">
+        
+        <h3 style="text-align: right; color: var(--primary); margin-top: 30px; border-bottom: 2px solid var(--primary-light); padding-bottom: 5px;">📄 المحاضرات</h3>
         <ul id="lectures" style="padding:0; list-style:none;"></ul>
+
+        <h3 style="text-align: right; color: var(--secondary); margin-top: 40px; border-bottom: 2px solid var(--secondary); padding-bottom: 5px;">🎙️ التسجيلات الصوتية (الفويسات)</h3>
+        <ul id="voicesList" style="padding:0; list-style:none;"></ul>
     </div>
 </section>
 
@@ -229,7 +229,7 @@
 </section>
 
 <section id="admin" class="page">
-    <button type="button" class="bigBtn" style="background: #ef4444;" onclick="logout()">تسجيل الخروج 🚪</button>
+    <button type="button" class="bigBtn" style="background: #ef4444; color: white;" onclick="logout()">تسجيل الخروج 🚪</button>
     <h2 style="text-align: center;">لوحة التحكم الشاملة ⚙️</h2>
     <div class="grid-container"> 
 
@@ -246,8 +246,16 @@
             <select id="lectureSubject"></select>
             <input id="lectureTitle" placeholder="عنوان المحاضرة">
             <input id="lectureUrl" placeholder="رابط الملف (Drive أو Telegram)">
-            <input id="lectureVoiceUrl" placeholder="رابط الفويس (اختياري)">
             <button type="button" class="bigBtn" style="width:100%; margin:15px 0 0 0; background: var(--primary); color: white;" onclick="addLecture()">حفظ المحاضرة ✅</button>
+        </div>
+
+        <div class="panel">
+            <h3>🎙️ إضافة فويس جديد</h3>
+            <label>اختر المادة:</label>
+            <select id="voiceSubjectSelect"></select>
+            <input id="voiceTitle" placeholder="اسم الفويس">
+            <input id="voiceUrl" placeholder="رابط الفويس">
+            <button type="button" class="bigBtn" style="width:100%; margin:15px 0 0 0; background: var(--secondary); color: white;" onclick="addVoice()">حفظ الفويس 🎙️</button>
         </div>
 
         <div class="panel">
@@ -263,14 +271,15 @@
             <select id="deleteSubjectList"></select>
             <button type="button" onclick="deleteItem('subjects', 'deleteSubjectList')" style="background:#ef4444; color:white; border:none; padding:10px; border-radius:10px; width:100%; cursor:pointer; margin-bottom:15px;">حذف المادة</button>
             
-            <label>حذف محاضرة / فويس:</label>
+            <label>حذف محاضرة:</label>
             <select id="deleteLectureList"></select>
-            <div style="display: flex; gap: 5px;">
-                <button type="button" onclick="deleteItem('lectures', 'deleteLectureList')" style="background:#ef4444; color:white; border:none; padding:10px; border-radius:10px; flex:1; cursor:pointer;">حذف المحاضرة كاملة</button>
-                <button type="button" onclick="deleteVoiceOnly()" style="background:#f59e0b; color:white; border:none; padding:10px; border-radius:10px; flex:1; cursor:pointer;">حذف الفويس فقط</button>
-            </div>
+            <button type="button" onclick="deleteItem('lectures', 'deleteLectureList')" style="background:#ef4444; color:white; border:none; padding:10px; border-radius:10px; width:100%; cursor:pointer; margin-bottom:15px;">حذف المحاضرة</button>
 
-            <label style="margin-top:15px; display:block;">حذف خبر:</label>
+            <label>حذف فويس:</label>
+            <select id="deleteVoiceList"></select>
+            <button type="button" onclick="deleteItem('voices', 'deleteVoiceList')" style="background:#ef4444; color:white; border:none; padding:10px; border-radius:10px; width:100%; cursor:pointer; margin-bottom:15px;">حذف الفويس</button>
+
+            <label>حذف خبر:</label>
             <select id="deleteNewsList"></select>
             <button type="button" onclick="deleteItem('news', 'deleteNewsList')" style="background:#ef4444; color:white; border:none; padding:10px; border-radius:10px; width:100%; cursor:pointer;">حذف الخبر</button>
         </div>
@@ -299,7 +308,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
-let globalData = { subjects: {}, news: {}, lectures: {} };
+let globalData = { subjects: {}, news: {}, lectures: {}, voices: {} };
 
 function sendNotification(msg) {
     if (!("Notification" in window)) return;
@@ -355,13 +364,22 @@ window.addLecture = async () => {
     const subId = document.getElementById("lectureSubject").value;
     const title = document.getElementById("lectureTitle").value.trim();
     const url = document.getElementById("lectureUrl").value.trim();
-    const voiceUrl = document.getElementById("lectureVoiceUrl").value.trim();
     if (!subId || !title || !url) return alert("الرجاء ملء كل الحقول!");
-    await push(ref(db, 'data/lectures'), { subjectId: subId, title, url, voiceUrl });
+    await push(ref(db, 'data/lectures'), { subjectId: subId, title, url });
     alert("✅ تم حفظ المحاضرة");
     document.getElementById("lectureTitle").value = "";
     document.getElementById("lectureUrl").value = "";
-    document.getElementById("lectureVoiceUrl").value = "";
+};
+
+window.addVoice = async () => {
+    const subId = document.getElementById("voiceSubjectSelect").value;
+    const title = document.getElementById("voiceTitle").value.trim();
+    const url = document.getElementById("voiceUrl").value.trim();
+    if (!subId || !title || !url) return alert("الرجاء ملء كل الحقول!");
+    await push(ref(db, 'data/voices'), { subjectId: subId, title, url });
+    alert("✅ تم حفظ الفويس بنجاح");
+    document.getElementById("voiceTitle").value = "";
+    document.getElementById("voiceUrl").value = "";
 };
 
 onValue(ref(db, 'data'), (snapshot) => {
@@ -376,6 +394,7 @@ onValue(ref(db, 'data'), (snapshot) => {
     globalData.subjects = data.subjects || {};
     globalData.news = newNews;
     globalData.lectures = data.lectures || {};
+    globalData.voices = data.voices || {};
     
     renderSubjects(globalData.subjects);
     renderNews(globalData.news);
@@ -385,15 +404,19 @@ onValue(ref(db, 'data'), (snapshot) => {
 function renderSubjects(subs) {
     const s1 = document.getElementById("subjects1"), s2 = document.getElementById("subjects2");
     const lSub = document.getElementById("lectureSubject");
-    s1.innerHTML = ""; s2.innerHTML = ""; lSub.innerHTML = "";
+    const vSub = document.getElementById("voiceSubjectSelect");
+    s1.innerHTML = ""; s2.innerHTML = ""; lSub.innerHTML = ""; vSub.innerHTML = "";
     Object.keys(subs).forEach(id => {
         const s = subs[id];
         let d = document.createElement("div"); d.className="card"; 
         d.innerHTML=`<div style="font-size:1.5rem">📖</div><strong>${s.name}</strong>`;
         d.onclick = () => window.openSubject(id, s.name);
         if(s.semester=="1") s1.appendChild(d); else s2.appendChild(d);
-        let o = document.createElement("option"); o.value=id; o.textContent=s.name;
-        lSub.appendChild(o);
+        
+        let o1 = document.createElement("option"); o1.value=id; o1.textContent=s.name;
+        lSub.appendChild(o1);
+        let o2 = document.createElement("option"); o2.value=id; o2.textContent=s.name;
+        vSub.appendChild(o2);
     });
 }
 
@@ -412,54 +435,85 @@ window.openSubject = (id, name) => {
     window.currentSubjectId = id;
     document.getElementById("subjectTitle").textContent = name;
     window.showPage("subjectPage");
-    renderLectures();
+    renderLecturesAndVoices();
 };
 
-window.renderLectures = (filterText = "") => {
-    const ul = document.getElementById("lectures");
-    ul.innerHTML = "";
+window.searchAll = (text) => {
+    renderLecturesAndVoices(text);
+};
+
+window.renderLecturesAndVoices = (filterText = "") => {
+    const lecUl = document.getElementById("lectures");
+    const voiceUl = document.getElementById("voicesList");
+    lecUl.innerHTML = "";
+    voiceUl.innerHTML = "";
+
+    // عرض المحاضرات
     Object.keys(globalData.lectures).forEach(id => {
         const lec = globalData.lectures[id];
         if (lec.subjectId === window.currentSubjectId && lec.title.includes(filterText)) {
             let li = document.createElement("li");
-            let voicePlayer = lec.voiceUrl ? `<audio controls style="width:100%; margin-top:10px;"><source src="${lec.voiceUrl}" type="audio/mpeg"></audio>` : "";
             li.innerHTML = `
                 <div class="lecture-info">
                     <strong>${lec.title}</strong>
                     <a href="${lec.url}" target="_blank" class="bigBtn" style="padding:8px 15px; font-size:0.8rem; margin:0; text-decoration:none;">تحميل</a>
                 </div>
-                ${voicePlayer}
             `;
-            ul.appendChild(li);
+            lecUl.appendChild(li);
         }
     });
+
+    // عرض الفويسات
+    let hasVoices = false;
+    Object.keys(globalData.voices).forEach(id => {
+        const v = globalData.voices[id];
+        if (v.subjectId === window.currentSubjectId && v.title.includes(filterText)) {
+            hasVoices = true;
+            let li = document.createElement("li");
+            li.style.borderRight = "6px solid var(--secondary)";
+            li.innerHTML = `
+                <div class="lecture-info">
+                    <strong>${v.title}</strong>
+                </div>
+                <audio controls style="width:100%; margin-top:10px;"><source src="${v.url}" type="audio/mpeg"></audio>
+            `;
+            voiceUl.appendChild(li);
+        }
+    });
+
+    if (!hasVoices) {
+        voiceUl.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-weight:bold; padding:20px;">لم يتم إضافة فويس بعد لهذه المادة</p>`;
+    }
 };
 
 function populateDeleteDropdowns() {
     const dSub = document.getElementById("deleteSubjectList");
     const dLec = document.getElementById("deleteLectureList");
+    const dVoice = document.getElementById("deleteVoiceList");
     const dNews = document.getElementById("deleteNewsList");
-    dSub.innerHTML = ""; dLec.innerHTML = ""; dNews.innerHTML = "";
+    
+    dSub.innerHTML = ""; dLec.innerHTML = ""; dVoice.innerHTML = ""; dNews.innerHTML = "";
+    
     Object.keys(globalData.subjects).forEach(id => dSub.innerHTML += `<option value="${id}">${globalData.subjects[id].name}</option>`);
+    
     Object.keys(globalData.lectures).forEach(id => {
         const sub = globalData.subjects[globalData.lectures[id].subjectId]?.name || "مجهولة";
-        dLec.innerHTML += `<option value="${id}">${globalData.lectures[id].title} - ${sub}</option>`;
+        dLec.innerHTML += `<option value="${id}">${globalData.lectures[id].title} (${sub})</option>`;
     });
+
+    Object.keys(globalData.voices).forEach(id => {
+        const sub = globalData.subjects[globalData.voices[id].subjectId]?.name || "مجهولة";
+        dVoice.innerHTML += `<option value="${id}">${globalData.voices[id].title} (${sub})</option>`;
+    });
+
     Object.keys(globalData.news).forEach(id => dNews.innerHTML += `<option value="${id}">${globalData.news[id].text}</option>`);
 }
 
 window.deleteItem = async (type, dropdownId) => {
     const id = document.getElementById(dropdownId).value;
-    if (!id || !confirm("حذف نهائي؟")) return;
+    if (!id || !confirm("هل أنت متأكد من الحذف النهائي؟")) return;
     await remove(ref(db, `data/${type}/${id}`));
-    alert("✅ تم الحذف");
-};
-
-window.deleteVoiceOnly = async () => {
-    const id = document.getElementById("deleteLectureList").value;
-    if (!id || !confirm("حذف الفويس فقط من هذه المحاضرة؟")) return;
-    await update(ref(db, `data/lectures/${id}`), { voiceUrl: "" });
-    alert("✅ تم حذف الفويس");
+    alert("✅ تم الحذف بنجاح");
 };
 
 window.addEventListener("load", () => {

@@ -66,7 +66,6 @@
         nav li { cursor: pointer; padding: 8px 15px; border-radius: 10px; font-weight: 500; font-size: 0.9rem; }
         nav li:hover { background: rgba(255, 255, 255, 0.2); }
 
-        /* Dynamic Header */
         header {
             text-align: center; padding: 80px 20px;
             background: radial-gradient(circle at top right, var(--primary), var(--secondary));
@@ -75,7 +74,6 @@
             margin-bottom: 20px;
         }
 
-        /* Cards & Grid */
         .page { display: none; padding: 30px 5%; animation: fadeInUp 0.6s ease-out; }
         .active { display: block; }
 
@@ -135,11 +133,10 @@
     </style>
 </head>
 <body>
+
 <div id="loader">
-    <div class="pulse-container">
-        <img src="logo.png" alt="Logo" class="pulse-logo">
-        <div class="loading-text">جاري تحضير المحاضرات...</div>
-    </div>
+    <div class="spinner"></div>
+    <div class="loading-text">جاري تحضير المحاضرات...</div>
 </div>
 
 <style>
@@ -147,25 +144,30 @@
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background-color: #ffffff;
+    background-color: var(--bg);
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     z-index: 9999;
     transition: opacity 0.5s ease;
 }
-.pulse-logo {
-    width: 120px; height: 120px;
-    animation: pulse 1.5s infinite ease-in-out;
+/* ستايل الدائرة الدوارة */
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(79, 70, 229, 0.1);
+    border-top: 5px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
 }
-@keyframes pulse {
-    0% { transform: scale(0.9); opacity: 0.7; }
-    50% { transform: scale(1.1); opacity: 1; }
-    100% { transform: scale(0.9); opacity: 0.7; }
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 .loading-text {
     margin-top: 20px; font-family: Arial, sans-serif;
-    color: #4f46e5; font-weight: bold; text-align: center;
+    color: var(--primary); font-weight: bold; text-align: center;
 }
 .loader-hidden { opacity: 0; visibility: hidden; }
 </style>
@@ -275,12 +277,6 @@
 
     </div>
 </section>
-  <div id="loader">
-    <div class="pulse-container">
-        <img src="logo.png.jpg" alt="Logo" class="pulse-logo" onerror="this.src='https://via.placeholder.com/120?text=SLP'">
-        <div class="loading-text">جاري تحضير المحاضرات...</div>
-    </div>
-</div>  
 
 <footer>✦ بإشراف صديقكم عمر زينو ✦</footer>
 
@@ -305,15 +301,12 @@ const db = getDatabase(app);
 const auth = getAuth(app);
 let globalData = { subjects: {}, news: {}, lectures: {} };
 
-// --- نظام الإشعارات ---
 function sendNotification(msg) {
     if (!("Notification" in window)) return;
     if (Notification.permission === "granted") {
-        new Notification("خبر جديد من قسم SLP! 📢", { body: msg, icon: 'logo.png' });
+        new Notification("خبر جديد من قسم SLP! 📢", { body: msg, icon: 'logo.png.jpg' });
     } else if (Notification.permission !== "denied") {
-        Notification.requestPermission().then(permission => {
-            if (permission === "granted") new Notification("أهلاً بك! ستصلك التنبيهات هنا.");
-        });
+        Notification.requestPermission();
     }
 }
 
@@ -373,12 +366,10 @@ window.addLecture = async () => {
 
 onValue(ref(db, 'data'), (snapshot) => {
     const data = snapshot.val() || {};
-    
-    // التحقق من الإشعارات عند تحديث البيانات
     const newNews = data.news || {};
     const lastNewsId = Object.keys(newNews).pop();
     if(lastNewsId && localStorage.getItem("lastSeenNews") !== lastNewsId) {
-        sendNotification(newNews[lastNewsId].text);
+        if(localStorage.getItem("lastSeenNews")) sendNotification(newNews[lastNewsId].text);
         localStorage.setItem("lastSeenNews", lastNewsId);
     }
 
@@ -472,7 +463,6 @@ window.deleteVoiceOnly = async () => {
 };
 
 window.addEventListener("load", () => {
-    // طلب إذن الإشعارات فور تحميل الصفحة
     if ("Notification" in window) Notification.requestPermission();
     setTimeout(() => document.getElementById("loader").classList.add("loader-hidden"), 1500);
 });

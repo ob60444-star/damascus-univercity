@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-   <meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>كلية العلوم الصحية - تقويم الكلام واللغة</title>
 
@@ -13,7 +13,7 @@
     <meta name="theme-color" content="#4f46e5">
 
     <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="apple-touch-icon" href="logo.png">
     <style>
         :root {
             --primary: #4f46e5;
@@ -44,25 +44,13 @@
             overflow-x: hidden;
         }
 
+        /* Animations */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* تأثير النبض لكلمة جديد */
-        @keyframes badgePulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .new-badge {
-            background: #ef4444; color: white; padding: 3px 8px;
-            border-radius: 12px; font-size: 0.75rem; font-weight: bold;
-            margin-right: 10px; display: inline-block;
-            animation: badgePulse 2s infinite;
-        }
-
+        /* Glass Nav */
         nav {
             position: sticky; top: 0; z-index: 1000;
             backdrop-filter: blur(15px);
@@ -78,6 +66,7 @@
         nav li { cursor: pointer; padding: 8px 15px; border-radius: 10px; font-weight: 500; font-size: 0.9rem; }
         nav li:hover { background: rgba(255, 255, 255, 0.2); }
 
+        /* Dynamic Header */
         header {
             text-align: center; padding: 80px 20px;
             background: radial-gradient(circle at top right, var(--primary), var(--secondary));
@@ -86,6 +75,7 @@
             margin-bottom: 20px;
         }
 
+        /* Cards & Grid */
         .page { display: none; padding: 30px 5%; animation: fadeInUp 0.6s ease-out; }
         .active { display: block; }
 
@@ -100,15 +90,25 @@
             border: 1px solid var(--glass-border);
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
             position: relative; overflow: hidden;
+            cursor: pointer;
         }
 
-        .card:hover { transform: translateY(-10px); border-color: var(--primary-light); cursor: pointer; }
+        /* Shine Effect */
+        .card::after {
+            content: ''; position: absolute; top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.6s;
+        }
+        .card:hover::after { left: 100%; }
+        .card:hover { transform: translateY(-10px); border-color: var(--primary-light); }
 
+        /* Buttons & Inputs */
         .bigBtn {
-            padding: 12px 24px; border: none; border-radius: 15px;
+            padding: 16px 32px; border: none; border-radius: 15px;
             background: white; color: var(--primary);
             cursor: pointer; font-weight: 700; box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-            margin: 5px;
+            margin: 10px;
         }
         .bigBtn:hover { background: var(--primary); color: white; transform: scale(1.05); }
 
@@ -116,33 +116,84 @@
             width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px;
             border: 2px solid var(--glass-border); background: var(--card-bg); color: var(--text-main);
         }
+        input:focus { border-color: var(--primary); outline: none; }
 
-        #lectures li, #voices li {
+        #lectures li {
             background: var(--card-bg); margin: 12px auto; padding: 20px;
-            border-radius: 18px; display: flex; justify-content: space-between;
-            align-items: center; max-width: 700px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border-radius: 18px; display: flex; flex-direction: column; gap: 15px;
+            max-width: 700px; border-right: 6px solid var(--primary);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
-        #lectures li { border-right: 6px solid var(--primary); }
-        #voices li { border-right: 6px solid var(--secondary); }
 
-        #loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #ffffff; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 9999;
-            transition: opacity 0.5s ease;
-        }
-        .pulse-logo { width: 120px; height: 120px; animation: badgePulse 1.5s infinite ease-in-out; }
-        .loader-hidden { opacity: 0; visibility: hidden; }
+        .lecture-header { display: flex; justify-content: space-between; align-items: center; width: 100%; }
 
         footer { text-align: center; padding: 40px; color: var(--text-muted); font-weight: 600; }
+
+        @media (max-width: 768px) {
+            nav { flex-direction: column; padding: 15px; }
+            nav ul { font-size: 0.8rem; margin-top: 10px; }
+            header { padding: 50px 20px; clip-path: none; }
+        }
+
+        /* Voice Note Styling */
+        .voice-container {
+            background: rgba(79, 70, 229, 0.05);
+            padding: 10px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        audio { height: 35px; flex-grow: 1; }
     </style>
 </head>
 <body>
-
 <div id="loader">
-    <img src="logo.png" alt="Logo" class="pulse-logo">
-    <div style="margin-top:20px; color:#4f46e5; font-weight:bold;">جاري تحضير المحاضرات والفويسات...</div>
+    <div class="pulse-container">
+        <img src="logo.png" alt="Logo" class="pulse-logo">
+        <div class="loading-text">جاري تحضير المحاضرات...</div>
+    </div>
 </div>
+
+<style>
+/* تصميم شاشة التحميل */
+#loader {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease;
+}
+
+.pulse-logo {
+    width: 120px;
+    height: 120px;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.9); opacity: 0.7; }
+    50% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(0.9); opacity: 0.7; }
+}
+
+.loading-text {
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+    color: #4f46e5;
+    font-weight: bold;
+    text-align: center;
+}
+
+.loader-hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+</style>
 
 <nav>
     <h3 style="margin:0">كلية العلوم الصحية ⚕️</h3>
@@ -171,14 +222,14 @@
 <section id="semester1" class="page">
     <h2>📚 مواد الفصل الدراسي الأول</h2>
     <div id="subjects1" class="grid-container"></div>
-    <h3 style="margin-top:40px">📢 آخر التحديثات والأخبار</h3>
+    <h3 style="margin-top:40px">📢 الإعلانات الهامة</h3>
     <div id="news1" class="grid-container"></div>
 </section>
 
 <section id="semester2" class="page">
     <h2>📚 مواد الفصل الدراسي الثاني</h2>
     <div id="subjects2" class="grid-container"></div>
-    <h3 style="margin-top:40px">📢 آخر التحديثات والأخبار</h3>
+    <h3 style="margin-top:40px">📢 الإعلانات الهامة</h3>
     <div id="news2" class="grid-container"></div>
 </section>
 
@@ -186,15 +237,8 @@
     <div style="text-align: center; max-width: 800px; margin: auto;">
         <button type="button" onclick="showPage('home')" style="background:none; border:none; color:var(--primary); cursor:pointer; font-weight:bold; font-size:1.1rem">⬅ عودة للرئيسية</button>
         <h2 id="subjectTitle" style="color:var(--primary); font-size: 2rem;"></h2>
-        <input type="text" id="searchInput" placeholder="🔍 ابحث عن محاضرة أو فويس..." onkeyup="searchContent(this.value)">
-        
-        <h3 style="text-align: right; color: var(--primary); margin-top:30px;">📝 المحاضرات والملفات</h3>
+        <input type="text" id="searchInput" placeholder="🔍 ابحث عن محاضرة بالاسم..." onkeyup="searchLecture(this.value)">
         <ul id="lectures" style="padding:0; list-style:none;"></ul>
-
-        <hr style="margin: 40px 0; border: 0; border-top: 2px dashed var(--primary-light); opacity: 0.3;">
-
-        <h3 style="text-align: right; color: var(--secondary);">🎙️ التسجيلات الصوتية (Voices)</h3>
-        <ul id="voices" style="padding:0; list-style:none;"></ul>
     </div>
 </section>
 
@@ -203,71 +247,50 @@
         <h3>دخول المشرف 🔐</h3>
         <input type="email" id="adminEmail" placeholder="البريد الإلكتروني للمشرف">
         <input type="password" id="pass" placeholder="كلمة السر">
-        <button type="button" class="bigBtn" style="width:100%; margin-top:20px;" onclick="login()">دخول</button>
+        <button type="button" class="bigBtn" style="width:100%; margin: 20px 0 0 0;" onclick="login()">دخول</button>
     </div>
 </section>
 
 <section id="admin" class="page">
-    <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom:30px;">
-        <h2>لوحة التحكم الشاملة ⚙️</h2>
-        <button type="button" class="bigBtn" style="background: #ef4444; color:white;" onclick="logout()">تسجيل الخروج 🚪</button>
-    </div>
-
-    <div class="grid-container">
+    <button type="button" class="bigBtn" style="background: #ef4444;" onclick="logout()">تسجيل الخروج 🚪</button>
+    <h2 style="text-align: center;">لوحة التحكم الشاملة ⚙️</h2>
+    <div class="grid-container"> 
+        
         <div class="panel">
             <h3>➕ مادة جديدة</h3>
             <input id="subjectName" placeholder="اسم المادة">
             <select id="subjectSemester"><option value="1">الفصل الأول</option><option value="2">الفصل الثاني</option></select>
             <button type="button" class="bigBtn" style="width:100%; margin:0;" onclick="addSubject()">حفظ المادة</button>
         </div>
-
+        
         <div class="panel">
-            <h3>📄 إضافة محاضرة</h3>
+            <h3>📄 إضافة محاضرة جديدة</h3>
+            <label style="font-size: 0.9rem; color: var(--text-muted);">اختر المادة:</label>
             <select id="lectureSubject"></select>
             <input id="lectureTitle" placeholder="عنوان المحاضرة">
-            <input id="lectureUrl" placeholder="رابط الملف">
-            <button type="button" class="bigBtn" style="width:100%; background: var(--primary); color: white;" onclick="addLecture()">حفظ المحاضرة ✅</button>
-        </div>
-
-        <div class="panel" style="border-right: 6px solid var(--secondary);">
-            <h3>🎙️ إضافة تسجيل صوتي</h3>
-            <select id="voiceSubject"></select>
-            <input id="voiceTitle" placeholder="عنوان التسجيل">
-            <input id="voiceUrl" placeholder="رابط الفويس">
-            <button type="button" class="bigBtn" style="width:100%; background: var(--secondary); color: white;" onclick="addVoice()">حفظ الفويس 🎙️</button>
+            <input id="lectureUrl" placeholder="رابط الملف (Drive أو Telegram)">
+            <input id="lectureVoiceUrl" placeholder="رابط التسجيل الصوتي (اختياري)">
+            <button type="button" class="bigBtn" style="width:100%; margin:15px 0 0 0; background: var(--primary); color: white;" onclick="addLecture()">حفظ المحاضرة ✅</button>
         </div>
 
         <div class="panel">
-            <h3>🔔 نشر خبر مخصص</h3>
+            <h3>🔔 نشر خبر</h3>
             <select id="newsSemester"><option value="1">فصل 1</option><option value="2">فصل 2</option></select>
-            <input id="newsText" placeholder="نص الخبر">
+            <input id="newsText" placeholder="نص الخبر الجديد">
             <button type="button" class="bigBtn" style="width:100%; margin:0;" onclick="addNews()">نشر الآن</button>
         </div>
 
-        <div class="panel" style="border-top: 5px solid #ef4444; grid-column: 1 / -1;">
-            <h3>🗑️ إدارة الحذف النهائي</h3>
-            <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px;">
-                <div>
-                    <label>حذف مادة:</label>
-                    <select id="deleteSubjectList"></select>
-                    <button type="button" class="bigBtn" style="width:100%; background:#ef4444; color:white;" onclick="deleteItem('subjects', 'deleteSubjectList')">حذف المادة</button>
-                </div>
-                <div>
-                    <label>حذف محاضرة:</label>
-                    <select id="deleteLectureList"></select>
-                    <button type="button" class="bigBtn" style="width:100%; background:#ef4444; color:white;" onclick="deleteItem('lectures', 'deleteLectureList')">حذف المحاضرة</button>
-                </div>
-                <div>
-                    <label>حذف فويس:</label>
-                    <select id="deleteVoiceList"></select>
-                    <button type="button" class="bigBtn" style="width:100%; background:#ef4444; color:white;" onclick="deleteItem('voices', 'deleteVoiceList')">حذف الفويس</button>
-                </div>
-                <div>
-                    <label>حذف خبر:</label>
-                    <select id="deleteNewsList"></select>
-                    <button type="button" class="bigBtn" style="width:100%; background:#ef4444; color:white;" onclick="deleteItem('news', 'deleteNewsList')">حذف الخبر</button>
-                </div>
-            </div>
+        <div class="panel" style="border-top: 5px solid #ef4444;">
+            <h3>🗑️ إدارة المحتوى (حذف)</h3>
+            <label>حذف مادة:</label>
+            <select id="deleteSubjectList"></select>
+            <button type="button" onclick="deleteItem('subjects', 'deleteSubjectList')" style="background:#ef4444; color:white; border:none; padding:10px; border-radius:10px; width:100%; cursor:pointer; margin-bottom:15px;">حذف المادة</button>
+            <label>حذف محاضرة:</label>
+            <select id="deleteLectureList"></select>
+            <button type="button" onclick="deleteItem('lectures', 'deleteLectureList')" style="background:#ef4444; color:white; border:none; padding:10px; border-radius:10px; width:100%; cursor:pointer; margin-bottom:15px;">حذف المحاضرة</button>
+            <label>حذف خبر:</label>
+            <select id="deleteNewsList"></select>
+            <button type="button" onclick="deleteItem('news', 'deleteNewsList')" style="background:#ef4444; color:white; border:none; padding:10px; border-radius:10px; width:100%; cursor:pointer;">حذف الخبر</button>
         </div>
     </div>
 </section>
@@ -286,20 +309,14 @@ const firebaseConfig = {
     projectId: "newproject-196e4",
     storageBucket: "newproject-196e4.firebasestorage.app",
     messagingSenderId: "228198289358",
-    appId: "1:228198289358:web:1f5da9730eee2ba148e59f"
+    appId: "1:228198289358:web:1f5da9730eee2ba148e59f",
+    measurementId: "G-DB5N88S89W"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
-let globalData = { subjects: {}, news: {}, lectures: {}, voices: {} };
-
-// دالة لمعرفة إذا كان العنصر جديد (أقل من 24 ساعة)
-window.checkIfNew = (timestamp) => {
-    if (!timestamp) return "";
-    const oneDay = 24 * 60 * 60 * 1000;
-    return (Date.now() - timestamp < oneDay) ? `<span class="new-badge">جديد ✨</span>` : "";
-};
+let globalData = { subjects: {}, news: {}, lectures: {} };
 
 window.showPage = (id) => {
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
@@ -313,97 +330,86 @@ window.toggleTheme = () => document.body.classList.toggle("dark");
 window.login = () => {
     const email = document.getElementById("adminEmail").value.trim();
     const pass = document.getElementById("pass").value.trim();
+    if(!email || !pass) return alert("اكتبي الإيميل وكلمة السر!");
     signInWithEmailAndPassword(auth, email, pass)
-        .then(() => { alert("✅ أهلاً بكِ في الإدارة!"); window.showPage("admin"); })
-        .catch(e => alert("❌ خطأ في الدخول!"));
+        .then(() => {
+            alert("✅ تم الدخول بنجاح!");
+            window.showPage("admin"); 
+        })
+        .catch(e => alert("❌ خطأ: " + e.message));
 };
 
-window.logout = () => signOut(auth).then(() => { alert("تم الخروج"); window.showPage("home"); });
+window.logout = () => {
+    signOut(auth).then(() => {
+        alert("تم تسجيل الخروج");
+        window.showPage("home");
+    });
+};
 
 window.addSubject = async () => {
-    const name = document.getElementById("subjectName").value.trim();
+    const nameInput = document.getElementById("subjectName");
+    const name = nameInput.value.trim();
     const sem = document.getElementById("subjectSemester").value;
-    if (name) { await push(ref(db, 'data/subjects'), { name, semester: sem, timestamp: Date.now() }); alert("✅ تمت المادة"); document.getElementById("subjectName").value=""; }
-};
-
-// تعديل إضافة محاضرة لتنشر خبر تلقائي مع التوقيت
-window.addLecture = async () => {
-    const subId = document.getElementById("lectureSubject").value;
-    const title = document.getElementById("lectureTitle").value.trim();
-    const url = document.getElementById("lectureUrl").value.trim();
-    if (subId && title && url) { 
-        const now = Date.now();
-        await push(ref(db, 'data/lectures'), { subjectId: subId, title, url, timestamp: now }); 
-        
-        // نشر إشعار تلقائي
-        const subName = globalData.subjects[subId] ? globalData.subjects[subId].name : "مادة";
-        const subSem = globalData.subjects[subId] ? globalData.subjects[subId].semester : "1";
-        await push(ref(db, 'data/news'), { text: `📄 تمت إضافة محاضرة جديدة: ${title} (${subName})`, semester: subSem, timestamp: now });
-
-        alert("✅ تمت إضافة المحاضرة ونشر إشعار للطلاب!"); 
-        document.getElementById("lectureTitle").value=""; document.getElementById("lectureUrl").value=""; 
-    }
-};
-
-// تعديل إضافة فويس لتنشر خبر تلقائي مع التوقيت
-window.addVoice = async () => {
-    const subId = document.getElementById("voiceSubject").value;
-    const title = document.getElementById("voiceTitle").value.trim();
-    const url = document.getElementById("voiceUrl").value.trim();
-    if (subId && title && url) { 
-        const now = Date.now();
-        await push(ref(db, 'data/voices'), { subjectId: subId, title, url, timestamp: now }); 
-        
-        // نشر إشعار تلقائي
-        const subName = globalData.subjects[subId] ? globalData.subjects[subId].name : "مادة";
-        const subSem = globalData.subjects[subId] ? globalData.subjects[subId].semester : "1";
-        await push(ref(db, 'data/news'), { text: `🎙️ تمت إضافة تسجيل صوتي: ${title} (${subName})`, semester: subSem, timestamp: now });
-
-        alert("✅ تمت إضافة الفويس ونشر إشعار للطلاب!"); 
-        document.getElementById("voiceTitle").value=""; document.getElementById("voiceUrl").value=""; 
-    }
+    if (!name) return alert("اكتبي اسم المادة أولاً!");
+    await push(ref(db, 'data/subjects'), { name, semester: sem });
+    alert("✅ تمت إضافة المادة بنجاح!");
+    nameInput.value = "";
 };
 
 window.addNews = async () => {
     const text = document.getElementById("newsText").value.trim();
     const sem = document.getElementById("newsSemester").value;
-    if (text) { await push(ref(db, 'data/news'), { text, semester: sem, timestamp: Date.now() }); alert("✅ تم النشر"); document.getElementById("newsText").value=""; }
+    if (!text) return alert("اكتب نص الخبر");
+    await push(ref(db, 'data/news'), { text, semester: sem });
+    alert("✅ تم نشر الخبر");
+    document.getElementById("newsText").value = "";
+};
+
+window.addLecture = async () => {
+    const subId = document.getElementById("lectureSubject").value;
+    const title = document.getElementById("lectureTitle").value.trim();
+    const url = document.getElementById("lectureUrl").value.trim();
+    const voiceUrl = document.getElementById("lectureVoiceUrl").value.trim();
+    if (!subId || !title || !url) return alert("الرجاء ملء كل الحقول!");
+    await push(ref(db, 'data/lectures'), { subjectId: subId, title, url, voiceUrl });
+    alert("✅ تم حفظ المحاضرة");
+    document.getElementById("lectureTitle").value = "";
+    document.getElementById("lectureUrl").value = "";
+    document.getElementById("lectureVoiceUrl").value = "";
 };
 
 onValue(ref(db, 'data'), (snapshot) => {
     const data = snapshot.val() || {};
-    globalData = { subjects: data.subjects || {}, news: data.news || {}, lectures: data.lectures || {}, voices: data.voices || {} };
+    globalData.subjects = data.subjects || {};
+    globalData.news = data.news || {};
+    globalData.lectures = data.lectures || {};
     renderSubjects(globalData.subjects);
     renderNews(globalData.news);
     populateDeleteDropdowns();
-    if(window.currentSubjectId) window.renderContent(document.getElementById("searchInput")?.value || "");
 });
 
 function renderSubjects(subs) {
     const s1 = document.getElementById("subjects1"), s2 = document.getElementById("subjects2");
-    const lSub = document.getElementById("lectureSubject"), vSub = document.getElementById("voiceSubject");
-    s1.innerHTML = ""; s2.innerHTML = ""; lSub.innerHTML = ""; vSub.innerHTML = "";
+    const lSub = document.getElementById("lectureSubject");
+    s1.innerHTML = ""; s2.innerHTML = ""; lSub.innerHTML = "";
     Object.keys(subs).forEach(id => {
         const s = subs[id];
         let d = document.createElement("div"); d.className="card"; 
-        d.innerHTML=`<div style="font-size:1.5rem">📖</div><strong>${s.name}</strong> ${window.checkIfNew(s.timestamp)}`;
+        d.innerHTML=`<div style="font-size:1.5rem">📖</div><strong>${s.name}</strong>`;
         d.onclick = () => window.openSubject(id, s.name);
         if(s.semester=="1") s1.appendChild(d); else s2.appendChild(d);
-        let o1 = document.createElement("option"); o1.value=id; o1.textContent=s.name; lSub.appendChild(o1);
-        let o2 = document.createElement("option"); o2.value=id; o2.textContent=s.name; vSub.appendChild(o2);
+        let o = document.createElement("option"); o.value=id; o.textContent=s.name;
+        lSub.appendChild(o);
     });
 }
 
 function renderNews(news) {
     const n1 = document.getElementById("news1"), n2 = document.getElementById("news2");
     n1.innerHTML = ""; n2.innerHTML = "";
-    
-    // ترتيب الأخبار من الأحدث للأقدم
-    const sortedNews = Object.keys(news).map(id => ({id, ...news[id]})).sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
-
-    sortedNews.forEach(n => {
+    Object.keys(news).forEach(id => {
+        const n = news[id];
         let d = document.createElement("div"); d.className="card"; d.style.borderRight="5px solid var(--primary)";
-        d.innerHTML=`<p style="margin:0">📢 ${n.text} ${window.checkIfNew(n.timestamp)}</p>`;
+        d.innerHTML=`<p>📢 ${n.text}</p>`;
         if(n.semester=="1") n1.appendChild(d); else n2.appendChild(d);
     });
 }
@@ -414,50 +420,64 @@ window.openSubject = (id, name) => {
     document.getElementById("subjectTitle").textContent = name;
     document.getElementById("searchInput").value = "";
     window.showPage("subjectPage");
-    window.renderContent();
+    renderLectures();
 };
 
-window.renderContent = (filter = "") => {
-    const lUl = document.getElementById("lectures"), vUl = document.getElementById("voices");
-    lUl.innerHTML = ""; vUl.innerHTML = "";
-    
-    Object.keys(globalData.lectures).forEach(id => {
-        const lec = globalData.lectures[id];
-        if (lec.subjectId === window.currentSubjectId && lec.title.includes(filter)) {
-            lUl.innerHTML += `<li><div><strong>${lec.title}</strong> ${window.checkIfNew(lec.timestamp)}</div> <a href="${lec.url}" target="_blank" class="bigBtn" style="background:var(--primary); color:white; text-decoration:none;">عرض 👁️</a></li>`;
+window.renderLectures = (filterText = "") => {
+    const ul = document.getElementById("lectures");
+    ul.innerHTML = "";
+    const allLectures = globalData.lectures || {};
+    Object.keys(allLectures).forEach(id => {
+        const lec = allLectures[id];
+        if (lec.subjectId === window.currentSubjectId && lec.title.includes(filterText)) {
+            let li = document.createElement("li");
+            let voiceHtml = lec.voiceUrl ? `
+                <div class="voice-container">
+                    <span>🎙️ تسجيل صوتي:</span>
+                    <audio controls><source src="${lec.voiceUrl}" type="audio/mpeg"></audio>
+                </div>` : "";
+            
+            li.innerHTML = `
+                <div class="lecture-header">
+                    <strong>${lec.title}</strong> 
+                    <a href="${lec.url}" target="_blank" class="bigBtn" style="padding:8px 15px; font-size:0.9rem; text-decoration:none; margin:0;">تحميل / مشاهدة</a>
+                </div>
+                ${voiceHtml}
+            `;
+            ul.appendChild(li);
         }
     });
-    
-    Object.keys(globalData.voices).forEach(id => {
-        const v = globalData.voices[id];
-        if (v.subjectId === window.currentSubjectId && v.title.includes(filter)) {
-            vUl.innerHTML += `<li><div><strong>${v.title}</strong> ${window.checkIfNew(v.timestamp)}</div> <a href="${v.url}" target="_blank" class="bigBtn" style="background:var(--secondary); color:white; text-decoration:none;">استماع 🎧</a></li>`;
-        }
-    });
-    if(!lUl.innerHTML) lUl.innerHTML = "<p>لا يوجد محاضرات.</p>";
-    if(!vUl.innerHTML) vUl.innerHTML = "<p>لا يوجد فويسات.</p>";
+    if(ul.innerHTML === "") ul.innerHTML = "<p>لم يتم رفع محاضرات لهذه المادة بعد.</p>";
 };
 
-window.searchContent = (val) => window.renderContent(val);
+window.searchLecture = (val) => window.renderLectures(val);
 
 function populateDeleteDropdowns() {
-    const dSub = document.getElementById("deleteSubjectList"), dLec = document.getElementById("deleteLectureList"), dVoi = document.getElementById("deleteVoiceList"), dNews = document.getElementById("deleteNewsList");
-    dSub.innerHTML = ""; dLec.innerHTML = ""; dVoi.innerHTML = ""; dNews.innerHTML = "";
-    Object.keys(globalData.subjects).forEach(id => dSub.innerHTML += `<option value="${id}">${globalData.subjects[id].name}</option>`);
-    Object.keys(globalData.lectures).forEach(id => dLec.innerHTML += `<option value="${id}">${globalData.lectures[id].title}</option>`);
-    Object.keys(globalData.voices).forEach(id => dVoi.innerHTML += `<option value="${id}">${globalData.voices[id].title}</option>`);
-    Object.keys(globalData.news).forEach(id => dNews.innerHTML += `<option value="${id}">${globalData.news[id].text.substring(0, 20)}...</option>`);
+    const dSub = document.getElementById("deleteSubjectList");
+    const dLec = document.getElementById("deleteLectureList");
+    const dNews = document.getElementById("deleteNewsList");
+    dSub.innerHTML = ""; dLec.innerHTML = ""; dNews.innerHTML = "";
+    const subs = globalData.subjects || {};
+    Object.keys(subs).forEach(id => dSub.innerHTML += `<option value="${id}">${subs[id].name}</option>`);
+    const lecs = globalData.lectures || {};
+    Object.keys(lecs).forEach(id => {
+        const subName = subs[lecs[id].subjectId] ? subs[lecs[id].subjectId].name : "مادة محذوفة";
+        dLec.innerHTML += `<option value="${id}">${lecs[id].title} (${subName})</option>`;
+    });
+    const news = globalData.news || {};
+    Object.keys(news).forEach(id => dNews.innerHTML += `<option value="${id}">${news[id].text}</option>`);
 }
 
 window.deleteItem = async (type, dropdownId) => {
     const id = document.getElementById(dropdownId).value;
-    if (id && confirm("حذف نهائي؟")) { await remove(ref(db, `data/${type}/${id}`)); alert("✅ تم الحذف"); }
+    if (!id || !confirm("هل أنت متأكد؟")) return;
+    await remove(ref(db, `data/${type}/${id}`));
+    alert("✅ تم الحذف");
 };
-</script>
 
-<script>
-    window.addEventListener("load", () => { setTimeout(() => document.getElementById("loader").classList.add("loader-hidden"), 1500); });
+window.addEventListener("load", () => {
+    setTimeout(() => { document.getElementById("loader").classList.add("loader-hidden"); }, 1500);
+});
 </script>
-
 </body>
 </html>

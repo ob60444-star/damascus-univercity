@@ -476,8 +476,12 @@ window.renderLecturesAndVoices = (filterText = "") => {
             li.innerHTML = `
                 <div class="lecture-info">
                     <strong>${v.title}</strong>
+                    <a href="${v.url}" target="_blank" class="bigBtn" style="background: var(--secondary); color: white; padding:8px 15px; font-size:0.8rem; margin:0; text-decoration:none;">استماع 🎙️</a>
                 </div>
-                <audio controls style="width:100%; margin-top:10px;"><source src="${v.url}" type="audio/mpeg"></audio>
+                <audio controls style="width:100%; margin-top:10px;" onerror="this.style.display='none'">
+                    <source src="${v.url}">
+                    متصفحك لا يدعم مشغل الصوت.
+                </audio>
             `;
             voiceUl.appendChild(li);
         }

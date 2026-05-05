@@ -288,12 +288,10 @@
 </section>
 
 <footer>✦ بإشراف صديقكم عمر زينو ✦</footer>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js"; 
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBnJIk-HVsd-g66QofhKkHSlMHxNlDh-XQ",
@@ -307,20 +305,49 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const db = getDatabase(app);
 const auth = getAuth(app);
 let globalData = { subjects: {}, news: {}, lectures: {}, voices: {} };
+let isDataLoaded = false;
 
-function sendNotification(msg) {
-    if (!("Notification" in window)) return;
-    if (Notification.permission === "granted") {
-        new Notification("خبر جديد من قسم SLP! 📢", { body: msg, icon: 'logo.png.jpg' });
-    } else if (Notification.permission !== "denied") {
-        Notification.requestPermission();
+// ✅ إخفاء الـ loader فوراً مع fallback
+function hideLoader() {
+    const loader = document.getElementById("loader");
+    if (loader) {
+        loader.classList.add("loader-hidden");
     }
 }
 
+// ✅ تحميل البيانات من Firebase
+function loadData() {
+    const dataRef = ref(db, 'data');
+    
+    onValue(dataRef, (snapshot) => {
+        console.log("✅ Firebase data loaded successfully");
+        
+        const data = snapshot.val() || {};
+        globalData.subjects = data.subjects || {};
+        globalData.news = data.news || {};
+        globalData.lectures = data.lectures || {};
+        globalData.voices = data.voices || {};
+        
+        isDataLoaded = true;
+        
+        // ✅ إعادة بناء الواجهة
+        renderSubjects(globalData.subjects);
+        renderNews(globalData.news);
+        populateDeleteDropdowns();
+        
+        hideLoader();
+    }, (error) => {
+        console.error("❌ Firebase error:", error);
+        // حتى لو فشل Firebase، نخفي الـ loader
+        hideLoader();
+        alert("تحذير: مشكلة في الاتصال بقاعدة البيانات، لكن التطبيق يعمل");
+    });
+}
+
+// باقي الدوال (نفسها بدون تغيير)
 window.showPage = (id) => {
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
     const target = document.getElementById(id);
@@ -344,6 +371,7 @@ window.logout = () => {
     signOut(auth).then(() => { alert("تم تسجيل الخروج"); window.showPage("home"); });
 };
 
+// باقي الدوال (addSubject, addNews, addLecture, addVoice, renderSubjects, renderNews, etc...)
 window.addSubject = async () => {
     const name = document.getElementById("subjectName").value.trim();
     const sem = document.getElementById("subjectSemester").value;
@@ -384,32 +412,6 @@ window.addVoice = async () => {
     document.getElementById("voiceUrl").value = "";
 };
 
-const loader = document.getElementById("loader");
-    if (loader) {
-        loader.classList.add("loader-hidden");
-    }
-
-    const data = snapshot.val() || {};
-    const newNews = data.news || {};
-    
-    // إدارة الإشعارات
-    const lastNewsId = Object.keys(newNews).pop();
-    if(lastNewsId && localStorage.getItem("lastSeenNews") !== lastNewsId) {
-        if(localStorage.getItem("lastSeenNews")) sendNotification(newNews[lastNewsId].text);
-        localStorage.setItem("lastSeenNews", lastNewsId);
-    }
-
-    // تحديث البيانات العالمية
-    globalData.subjects = data.subjects || {};
-    globalData.news = newNews;
-    globalData.lectures = data.lectures || {};
-    globalData.voices = data.voices || {};
-    
-    // إعادة بناء الواجهة
-    renderSubjects(globalData.subjects);
-    renderNews(globalData.news);
-    populateDeleteDropdowns();
-});
 function renderSubjects(subs) {
     const s1 = document.getElementById("subjects1"), s2 = document.getElementById("subjects2");
     const lSub = document.getElementById("lectureSubject");
@@ -457,7 +459,6 @@ window.renderLecturesAndVoices = (filterText = "") => {
     lecUl.innerHTML = "";
     voiceUl.innerHTML = "";
 
-    // عرض المحاضرات
     Object.keys(globalData.lectures).forEach(id => {
         const lec = globalData.lectures[id];
         if (lec.subjectId === window.currentSubjectId && lec.title.includes(filterText)) {
@@ -472,7 +473,6 @@ window.renderLecturesAndVoices = (filterText = "") => {
         }
     });
 
-    // عرض الفويسات
     let hasVoices = false;
     Object.keys(globalData.voices).forEach(id => {
         const v = globalData.voices[id];
@@ -528,18 +528,21 @@ window.deleteItem = async (type, dropdownId) => {
     await remove(ref(db, `data/${type}/${id}`));
     alert("✅ تم الحذف بنجاح");
 };
+
+// ✅ تشغيل التطبيق عند تحميل الصفحة
 window.addEventListener("load", () => {
+    console.log("🚀 App starting...");
+    
+    // إخفاء الـ loader بعد ثانيتين كحد أقصى (أمان)
+    setTimeout(hideLoader, 2000);
+    
+    // طلب إذن الإشعارات
     if ("Notification" in window) Notification.requestPermission();
     
-    // مؤقت أمان سريع: إذا تأخر Firebase لأكثر من 2.5 ثانية، ارفع الستار
-    setTimeout(() => {
-        const loader = document.getElementById("loader");
-        if (loader && !loader.classList.contains("loader-hidden")) {
-            loader.classList.add("loader-hidden");
-            console.warn("تم التخطي بواسطة مؤقت الأمان لضمان عدم تعليق الشاشة");
-        }
-    }, 2500); 
+    // تحميل البيانات
+    loadData();
 });
 </script>
+
 </body>
 </html>

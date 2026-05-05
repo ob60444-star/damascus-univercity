@@ -157,7 +157,7 @@
             margin-top: 20px; font-family: Arial, sans-serif;
             color: var(--primary); font-weight: bold; text-align: center;
         }
-        .loader-hidden { opacity: 0; visibility: hidden; }
+        .loader-hidden { opacity: 0; visibility: hidden; pointer-events: none;}
     </style>
 </head>
 <body>
@@ -401,6 +401,10 @@ onValue(ref(db, 'data'), (snapshot) => {
     renderSubjects(globalData.subjects);
     renderNews(globalData.news);
     populateDeleteDropdowns();
+    const loader = document.getElementById("loader");
+    if (loader && !loader.classList.contains("loader-hidden")) {
+        loader.classList.add("loader-hidden");
+    }
 });
 
 function renderSubjects(subs) {
@@ -521,11 +525,11 @@ window.deleteItem = async (type, dropdownId) => {
     await remove(ref(db, `data/${type}/${id}`));
     alert("✅ تم الحذف بنجاح");
 };
-
 window.addEventListener("load", () => {
     if ("Notification" in window) Notification.requestPermission();
-    setTimeout(() => document.getElementById("loader").classList.add("loader-hidden"), 1500);
+    // حذفنا الـ setTimeout من هنا لأننا لا نريد إخفاء اللودر بناءً على الوقت
 });
+
 </script>
 </body>
 </html>
